@@ -48,6 +48,7 @@ class MascotaController extends Controller
 
     public function update(Request $request, $id)
     {
+        // dd($request);
         $mascota = Mascota::find($id);
 
         $request->validate([

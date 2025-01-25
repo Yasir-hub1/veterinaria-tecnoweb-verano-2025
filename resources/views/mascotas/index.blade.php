@@ -92,7 +92,6 @@
         <form id="mascotaForm" class="mascota-form" novalidate>
             @csrf
             <input type="hidden" id="mascota_id" name="id">
-
             <div class="modal-body">
                 <!-- Sección de Imagen -->
                 <div class="form-section">
@@ -198,280 +197,346 @@
 @endsection
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-   const mascotaController = {
-    modal: null,
-    form: null,
-    currentId: null,
-    imagePreview: null,
-    submitButton: null,
-    isSubmitting: false,
+    <script>
+    const mascotaController = {
+        modal: null,
+        form: null,
+        currentId: null,
+        imagePreview: null,
+        submitButton: null,
+        isSubmitting: false,
 
-    init() {
-        this.modal = document.getElementById('mascotaModal');
-        this.form = document.getElementById('mascotaForm');
-        this.imagePreview = document.getElementById('imagePreview');
-        this.submitButton = this.form.querySelector('button[type="submit"]');
+        init() {
+            this.modal = document.getElementById('mascotaModal');
+            this.form = document.getElementById('mascotaForm');
+            this.imagePreview = document.getElementById('imagePreview');
+            this.submitButton = this.form.querySelector('button[type="submit"]');
 
-        this.setupEventListeners();
-    },
+            this.setupEventListeners();
+        },
 
-    setupEventListeners() {
-        // Manejo del formulario
-        this.form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            if (!this.isSubmitting) {
-                this.handleSubmit(e);
-            }
-        });
-
-        // Manejo de imagen
-        document.getElementById('imagen').addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    this.imagePreview.src = e.target.result;
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-    },
-
-    openModal(id = null) {
-        this.currentId = id;
-        this.resetForm();
-
-        const title = this.modal.querySelector('.modal-title');
-        title.textContent = id ? 'Editar Mascota' : 'Nueva Mascota';
-
-        if (id) {
-            this.loadMascotaData(id);
-        }
-
-        this.modal.classList.add('active');
-    },
-
-    closeModal() {
-        this.modal.classList.remove('active');
-        this.resetForm();
-    },
-
-    resetForm() {
-        this.form.reset();
-        this.imagePreview.src = '/storage/mascotas/default.png';
-        this.clearErrors();
-        this.enableSubmitButton();
-        this.currentId = null;
-    },
-
-    async loadMascotaData(id) {
-        try {
-            const response = await fetch(`/mascotas/${id}`);
-            const data = await response.json();
-
-            if (!response.ok) throw new Error(data.message || 'Error al cargar datos');
-
-            this.fillFormData(data);
-        } catch (error) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: error.message
-            });
-            this.closeModal();
-        }
-    },
-
-    fillFormData(data) {
-        document.getElementById('mascota_id').value = data.id;
-        document.getElementById('nombre').value = data.nombre;
-        document.getElementById('cliente_id').value = data.cliente_id;
-        document.getElementById('tipo').value = data.tipo;
-        document.getElementById('raza').value = data.raza;
-        document.getElementById('edad').value = data.edad;
-
-        if (data.imagen) {
-            this.imagePreview.src = `/storage/${data.imagen}`;
-        }
-    },
-
-    async handleSubmit(event) {
-        event.preventDefault();
-
-        try {
-            if (!this.validateForm()) {
-                return;
-            }
-
-            this.disableSubmitButton();
-            const formData = new FormData(this.form);
-            const token = document.querySelector('meta[name="csrf-token"]').content;
-
-            let url = '/mascotas';
-            let method = 'POST';
-
-            if (this.currentId) {
-                url = `/mascotas/${this.currentId}`;
-                method = 'POST'; // Usamos POST pero con _method
-                formData.append('_method', 'PUT');
-            }
-
-            const response = await fetch(url, {
-                method: method,
-                body: formData,
-                headers: {
-                    'X-CSRF-TOKEN': token,
-                    'Accept': 'application/json'
+        setupEventListeners() {
+            // Manejo del formulario
+            this.form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                if (!this.isSubmitting) {
+                    this.handleSubmit(e);
                 }
             });
 
-            const result = await response.json();
-
-            if (!response.ok) {
-                if (response.status === 422) {
-                    // Errores de validación
-                    Object.keys(result.errors).forEach(field => {
-                        this.showFieldError(field, result.errors[field][0]);
-                    });
-                    throw new Error('Por favor, revise los campos del formulario.');
+            // Manejo de imagen
+            document.getElementById('imagen').addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        this.imagePreview.src = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
                 }
-                throw new Error(result.message || 'Error al procesar la solicitud');
+            });
+        },
+
+        openModal(id = null) {
+            this.currentId = id;
+            this.resetForm();
+
+            const title = this.modal.querySelector('.modal-title');
+            title.textContent = id ? 'Editar Mascota' : 'Nueva Mascota';
+
+            if (id) {
+                this.loadMascotaData(id);
             }
 
-            Swal.fire({
-                icon: 'success',
-                title: '¡Éxito!',
-                text: result.message,
-                timer: 1500,
-                showConfirmButton: false
-            });
+            this.modal.classList.add('active');
+        },
 
-            this.closeModal();
-            setTimeout(() => window.location.reload(), 1500);
+        closeModal() {
+            this.modal.classList.remove('active');
+            this.resetForm();
+        },
 
-        } catch (error) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: error.message
-            });
-        } finally {
+        resetForm() {
+            this.form.reset();
+            this.imagePreview.src = '/storage/mascotas/default.png';
+            this.clearErrors();
             this.enableSubmitButton();
+            this.currentId = null;
+        },
+
+        async loadMascotaData(id) {
+            try {
+                const response = await fetch(`/mascotas/${id}`);
+                const data = await response.json();
+
+                if (!response.ok) throw new Error(data.message || 'Error al cargar datos');
+
+                this.fillFormData(data);
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: error.message
+                });
+                this.closeModal();
+            }
+        },
+
+        fillFormData(data) {
+            document.getElementById('mascota_id').value = data.id;
+            document.getElementById('nombre').value = data.nombre;
+            document.getElementById('cliente_id').value = data.cliente_id;
+            document.getElementById('tipo').value = data.tipo;
+            document.getElementById('raza').value = data.raza;
+            document.getElementById('edad').value = data.edad;
+
+            if (data.imagen) {
+                this.imagePreview.src = `/storage/${data.imagen}`;
+            }
+        },
+
+        // async handleSubmit(event) {
+        //     event.preventDefault();
+
+        //     try {
+        //         if (!this.validateForm()) {
+        //             return;
+        //         }
+
+        //         this.disableSubmitButton();
+        //         const formData = new FormData(this.form);
+        //         const token = document.querySelector('meta[name="csrf-token"]').content;
+
+        //         let url = '/mascotas';
+        //         let method = 'POST';
+
+        //         if (this.currentId) {
+        //             url = `/mascotas/${this.currentId}`;
+        //             method = 'POST'; // Usamos POST pero con _method
+        //             formData.append('_method', 'PUT');
+        //         }
+
+        //         const response = await fetch(url, {
+        //             method: method,
+        //             body: formData,
+        //             headers: {
+        //                 'X-CSRF-TOKEN': token,
+        //                 'Accept': 'application/json'
+        //             }
+        //         });
+
+        //         const result = await response.json();
+
+        //         if (!response.ok) {
+        //             if (response.status === 422) {
+        //                 // Errores de validación
+        //                 Object.keys(result.errors).forEach(field => {
+        //                     this.showFieldError(field, result.errors[field][0]);
+        //                 });
+        //                 throw new Error('Por favor, revise los campos del formulario.');
+        //             }
+        //             throw new Error(result.message || 'Error al procesar la solicitud');
+        //         }
+
+        //         Swal.fire({
+        //             icon: 'success',
+        //             title: '¡Éxito!',
+        //             text: result.message,
+        //             timer: 1500,
+        //             showConfirmButton: false
+        //         });
+
+        //         this.closeModal();
+        //         setTimeout(() => window.location.reload(), 1500);
+
+        //     } catch (error) {
+        //         Swal.fire({
+        //             icon: 'error',
+        //             title: 'Error',
+        //             text: error.message
+        //         });
+        //     } finally {
+        //         this.enableSubmitButton();
+        //     }
+        // },
+
+        async handleSubmit(event) {
+    event.preventDefault();
+
+    try {
+        if (!this.validateForm()) {
+            return;
         }
-    },
 
-    validateForm() {
-        let isValid = true;
-        const requiredFields = {
-            'cliente_id': 'Seleccione un cliente',
-            'nombre': 'Ingrese el nombre',
-            'tipo': 'Seleccione el tipo',
-            'raza': 'Ingrese la raza',
-            'edad': 'Ingrese la edad'
-        };
+        this.disableSubmitButton();
+        const formData = new FormData(this.form);
+        const token = document.querySelector('meta[name="csrf-token"]').content;
 
-        Object.entries(requiredFields).forEach(([field, message]) => {
-            const input = document.getElementById(field);
-            const value = input.value.trim();
+        // Get the current ID from the hidden input
+        const mascotaId = document.getElementById('mascota_id').value;
 
-            if (!value) {
-                this.showFieldError(field, message);
+        let url = '/mascotas';
+        let method = 'POST';
+
+        if (mascotaId) {
+            url = `/mascotas/${mascotaId}`;
+            formData.append('_method', 'PUT');
+        }
+
+        const response = await fetch(url, {
+            method: method,
+            body: formData,
+            headers: {
+                'X-CSRF-TOKEN': token,
+                'Accept': 'application/json'
+            }
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            if (response.status === 422) {
+                Object.keys(result.errors).forEach(field => {
+                    this.showFieldError(field, result.errors[field][0]);
+                });
+                throw new Error('Please check the form fields.');
+            }
+            throw new Error(result.message || 'Error processing request');
+        }
+
+        await Swal.fire({
+            icon: 'success',
+            title: '¡Éxito!',
+            text: result.message,
+            timer: 1500,
+            showConfirmButton: false
+        });
+
+        this.closeModal();
+        setTimeout(() => window.location.reload(), 1500);
+
+    } catch (error) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: error.message
+        });
+    } finally {
+        this.enableSubmitButton();
+    }
+},
+
+        validateForm() {
+            let isValid = true;
+            const requiredFields = {
+                'cliente_id': 'Seleccione un cliente',
+                'nombre': 'Ingrese el nombre',
+                'tipo': 'Seleccione el tipo',
+                'raza': 'Ingrese la raza',
+                'edad': 'Ingrese la edad'
+            };
+
+            Object.entries(requiredFields).forEach(([field, message]) => {
+                const input = document.getElementById(field);
+                const value = input.value.trim();
+
+                if (!value) {
+                    this.showFieldError(field, message);
+                    isValid = false;
+                }
+            });
+
+            // Validación específica para edad
+            const edad = document.getElementById('edad');
+            if (edad.value && (edad.value < 0 || edad.value > 100)) {
+                this.showFieldError('edad', 'La edad debe estar entre 0 y 100 años');
                 isValid = false;
             }
-        });
 
-        // Validación específica para edad
-        const edad = document.getElementById('edad');
-        if (edad.value && (edad.value < 0 || edad.value > 100)) {
-            this.showFieldError('edad', 'La edad debe estar entre 0 y 100 años');
-            isValid = false;
-        }
+            return isValid;
+        },
 
-        return isValid;
-    },
+        async delete(id) {
+            try {
+                const result = await Swal.fire({
+                    title: '¿Eliminar mascota?',
+                    text: 'Esta acción no se puede deshacer',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#dc3545',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'Cancelar'
+                });
 
-    async delete(id) {
-        try {
-            const result = await Swal.fire({
-                title: '¿Eliminar mascota?',
-                text: 'Esta acción no se puede deshacer',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#dc3545',
-                cancelButtonColor: '#6c757d',
-                confirmButtonText: 'Sí, eliminar',
-                cancelButtonText: 'Cancelar'
-            });
+                if (!result.isConfirmed) return;
 
-            if (!result.isConfirmed) return;
+                const response = await fetch(`/mascotas/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json'
+                    }
+                });
 
-            const response = await fetch(`/mascotas/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                    'Accept': 'application/json'
-                }
-            });
+                const data = await response.json();
 
-            const data = await response.json();
+                if (!response.ok) throw new Error(data.message || 'Error al eliminar');
 
-            if (!response.ok) throw new Error(data.message || 'Error al eliminar');
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Eliminado!',
+                    text: data.message,
+                    timer: 1500,
+                    showConfirmButton: false
+                });
 
-            Swal.fire({
-                icon: 'success',
-                title: '¡Eliminado!',
-                text: data.message,
-                timer: 1500,
-                showConfirmButton: false
-            });
+                setTimeout(() => window.location.reload(), 1500);
 
-            setTimeout(() => window.location.reload(), 1500);
-
-        } catch (error) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: error.message
-            });
-        }
-    },
-
-    showFieldError(field, message) {
-        const input = document.getElementById(field);
-        if (input) {
-            input.classList.add('is-invalid');
-            const errorElement = input.nextElementSibling;
-            if (errorElement && errorElement.classList.contains('error-message')) {
-                errorElement.textContent = message;
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: error.message
+                });
             }
+        },
+
+        showFieldError(field, message) {
+            const input = document.getElementById(field);
+            if (input) {
+                input.classList.add('is-invalid');
+                const errorElement = input.nextElementSibling;
+                if (errorElement && errorElement.classList.contains('error-message')) {
+                    errorElement.textContent = message;
+                }
+            }
+        },
+
+        clearErrors() {
+            this.form.querySelectorAll('.is-invalid').forEach(input => {
+                input.classList.remove('is-invalid');
+            });
+            this.form.querySelectorAll('.error-message').forEach(span => {
+                span.textContent = '';
+            });
+        },
+
+        disableSubmitButton() {
+            this.isSubmitting = true;
+            this.submitButton.disabled = true;
+            this.submitButton.innerHTML = `
+                <span class="button-loader"></span>
+                <span class="button-text">Guardando...</span>
+            `;
+        },
+
+        enableSubmitButton() {
+            this.isSubmitting = false;
+            this.submitButton.disabled = false;
+            this.submitButton.innerHTML = '<span class="button-text">Guardar</span>';
         }
-    },
-
-    clearErrors() {
-        this.form.querySelectorAll('.is-invalid').forEach(input => {
-            input.classList.remove('is-invalid');
-        });
-        this.form.querySelectorAll('.error-message').forEach(span => {
-            span.textContent = '';
-        });
-    },
-
-    disableSubmitButton() {
-        this.isSubmitting = true;
-        this.submitButton.disabled = true;
-        this.submitButton.innerHTML = `
-            <span class="button-loader"></span>
-            <span class="button-text">Guardando...</span>
-        `;
-    },
-
-    enableSubmitButton() {
-        this.isSubmitting = false;
-        this.submitButton.disabled = false;
-        this.submitButton.innerHTML = '<span class="button-text">Guardar</span>';
-    }
-};
+    };
 
 // Inicializar el controlador cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', () => {
