@@ -5,32 +5,64 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Usuario;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 
 class AuthController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('guest')->except('logout');
+    }
+
+    public function showLoginForm()
+    {
+        if (Auth::check()) {
+            return redirect()->route('dashboard');
+        }
+        return view('auth.login');
+    }
+
     public function login(Request $request)
     {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required'
+        $credentials = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required'],
         ]);
 
-        $usuario = Usuario::where('email', $request->email)->first();
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
 
-        if (!$usuario || !Hash::check($request->password, $usuario->password)) {
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'redirect' => route('dashboard')
+                ]);
+            }
+
+            return redirect()->intended('dashboard');
+        }
+
+        if ($request->ajax()) {
             return response()->json([
-                'message' => 'Credenciales inválidas'
+                'success' => false,
+                'message' => 'Las credenciales proporcionadas no son correctas.'
             ], 401);
         }
 
-        $token = $usuario->createToken('auth_token')->plainTextToken;
+        return back()->withErrors([
+            'email' => 'Las credenciales proporcionadas no son correctas.',
+        ])->withInput($request->except('password'));
+    }
 
-        return response()->json([
-            'access_token' => $token,
-            'token_type' => 'Bearer',
-            'user' => $usuario->load('role.permisos')
-        ]);
+    public function logout(Request $request)
+    {
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('/');
     }
 }

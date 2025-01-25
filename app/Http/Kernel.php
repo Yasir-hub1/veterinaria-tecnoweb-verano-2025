@@ -21,7 +21,6 @@ class Kernel extends HttpKernel
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
-        'verificar.permiso' => \App\Http\Middleware\VerificarPermiso::class,
 
     ];
 
@@ -67,4 +66,9 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
     ];
+
+    // protected $routeMiddleware = [
+    //     // ... otros middlewares
+    //     'verificar.permiso' => \App\Http\Middleware\VerificarPermiso::class,
+    // ];
 }

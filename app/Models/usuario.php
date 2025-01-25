@@ -51,13 +51,32 @@ class Usuario extends Authenticatable
         'password' => 'hashed',
     ];
 
-    public function role()
+    public function roles()
     {
-        return $this->belongsTo(Role::class);
+        return $this->belongsToMany(Role::class, 'roles_permisos', 'usuario_id', 'role_id');
     }
 
-    public function tienePermiso($nombrePermiso)
+    public function tienePermiso($permissionName)
     {
-        return $this->role->permisos->contains('nombre', $nombrePermiso);
+        return $this->roles()
+            ->whereHas('permisos', function($query) use ($permissionName) {
+                $query->where('permisos.nombre', $permissionName);
+            })
+            ->exists();
+    }
+
+    public function tipo()
+    {
+        return $this->belongsTo(Tipo::class);
+    }
+
+    public function hasRole($roleName)
+    {
+        return $this->roles->contains('nombre', $roleName);
+    }
+
+    public function hasPermission($permissionName)
+    {
+        return $this->roles->flatMap->permisos->contains('nombre', $permissionName);
     }
 }

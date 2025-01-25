@@ -9,20 +9,40 @@ use Symfony\Component\HttpFoundation\Response;
 class VerificarPermiso
 {
     /**
-     * Handle an incoming request.
+     * Maneja la verificación de permisos para la petición entrante.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
+     * @return mixed
      */
-    // public function handle(Request $request, Closure $next): Response
+    // public function handle(Request $request, Closure $next, $permiso)
     // {
+    //     // Verificar que el permiso no sea nulo
+    //     if (!$permiso) {
+    //         return response()->json([
+    //             'message' => 'Error de configuración: Permiso no especificado',
+    //             'error' => 'Configuration Error'
+    //         ], 500);
+    //     }
+
+    //     // Verificar que el usuario esté autenticado
+    //     if (!$request->user()) {
+    //         return response()->json([
+    //             'message' => 'Usuario no autenticado',
+    //             'error' => 'Unauthorized'
+    //         ], 401);
+    //     }
+
+    //     // Verificar el permiso del usuario
+    //     if (!$request->user()->tienePermiso($permiso)) {
+    //         return response()->json([
+    //             'message' => 'No tiene los permisos necesarios para acceder a este recurso',
+    //             'error' => 'Forbidden',
+    //             'required_permission' => $permiso
+    //         ], 403);
+    //     }
+
     //     return $next($request);
     // }
-    public function handle(Request $request, Closure $next, $permiso)
-    {
-        if (!$request->user()->tienePermiso($permiso)) {
-            return response()->json(['message' => 'No autorizado'], 403);
-        }
 
-        return $next($request);
-    }
 }

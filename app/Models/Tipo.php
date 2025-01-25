@@ -11,4 +11,9 @@ class Tipo extends Model
     public $timestamps = false;
     protected $tableName = "tipo";
     protected $fillable = ['id',"nombre"];
+
+    public function usuarios()
+    {
+        return $this->hasMany(Usuario::class);
+    }
 }

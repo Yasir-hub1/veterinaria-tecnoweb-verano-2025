@@ -11,4 +11,9 @@ class Mascota extends Model
     public $timestamps = false;
     protected $tableName = "mascotas";
     protected $fillable = ['cliente_id',"nombre","edad","tipo","raza","imagen"];
+
+    public function cliente()
+    {
+        return $this->belongsTo(Cliente::class, 'cliente_id');
+    }
 }
