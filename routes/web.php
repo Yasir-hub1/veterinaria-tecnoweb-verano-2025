@@ -78,11 +78,11 @@ Route::prefix('mascotas')->group(function () {
     // Service Management Routes
     Route::prefix('servicios')->group(function () {
         Route::controller(ServicioController::class)->group(function () {
-            Route::get('/', 'index')->middleware('permiso:gestionar_servicios');
-            Route::post('/', 'store')->middleware('permiso:gestionar_servicios');
-            Route::get('/{servicio}', 'show')->middleware('permiso:gestionar_servicios');
-            Route::put('/{servicio}', 'update')->middleware('permiso:gestionar_servicios');
-            Route::delete('/{servicio}', 'destroy')->middleware('permiso:gestionar_servicios');
+            Route::get('/', 'index')->name('servicios.index');
+            Route::post('/', 'store')->name('servicios.store');
+            Route::get('/{servicio}', 'show')->name('servicios.show');
+            Route::put('/{servicio}', 'update')->name('servicios.update');
+            Route::delete('/{servicio}', 'destroy')->name('servicios.destroy');
         });
     });
 });

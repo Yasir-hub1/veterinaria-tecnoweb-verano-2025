@@ -169,7 +169,7 @@
                     <i class="fas fa-box"></i>
                     <span>Productos</span>
                 </a>
-                <a href="#" class="nav-item">
+                <a href="{{ route('servicios.index') }}" class="nav-item {{ Request::is('servicios*') ? 'active' : '' }}">
                     <i class="fas fa-stethoscope"></i>
                     <span>Servicios</span>
                 </a>
