@@ -9,6 +9,6 @@ class Pago extends Model
 {
     use HasFactory;
     public $timestamps = false;
-    protected $tableName = "pagos";
+    protected $table = "pagos";
     protected $fillable = ['nota_servicio_id',"servicio_id","cantidad","total"];
 }

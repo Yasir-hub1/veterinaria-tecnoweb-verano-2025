@@ -10,6 +10,6 @@ class Proveedor extends Model
     use HasFactory;
 
     public $timestamps = false;
-    protected $tableName = "proveedores";
+    protected $table = "proveedores";
     protected $fillable = ['nombre',"telefono","direccion","email"];
 }

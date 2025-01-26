@@ -9,7 +9,7 @@ class RolesPermiso extends Model
 {
     use HasFactory;
     public $timestamps = false;
-    protected $tableName = "roles_permisos";
+    protected $table = "roles_permisos";
     protected $fillable = ['role_id',"permiso_id","usuario_id"];
 
 }

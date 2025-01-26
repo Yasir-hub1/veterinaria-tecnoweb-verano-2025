@@ -10,7 +10,7 @@ class NotaServicio extends Model
     use HasFactory;
 
     public $timestamps = false;
-    protected $tableName = "notas_servicio";
+    protected $table = "notas_servicio";
     protected $fillable = ['mascota_id',"usuario_id","fecha","montototal","metodopago","estado"];
 
 }

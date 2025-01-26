@@ -9,7 +9,7 @@ class Mascota extends Model
 {
     use HasFactory;
     public $timestamps = false;
-    protected $tableName = "mascotas";
+    protected $table = "mascotas";
     protected $fillable = ['cliente_id',"nombre","edad","tipo","raza","imagen"];
 
     public function cliente()

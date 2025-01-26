@@ -7,59 +7,62 @@ use Illuminate\Http\Request;
 
 class AlmacenController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $almacenes = Almacen::all();
+        return view('almacen.index', compact('almacenes'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function show($id)
     {
-        //
+        $mascota = Almacen::findOrFail($id);
+        return response()->json($mascota);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+
+            'nombre' => 'required|string|max:255',
+
+
+            'descripcion' => 'required|string|max:100',
+
+        ]);
+
+        $data = $request->all();
+
+
+
+        Almacen::create($data);
+        return response()->json(['success' => true, 'message' => 'Almacen registrada con éxito']);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Almacen $almacen)
+    public function update(Request $request, $id)
     {
-        //
+        // dd($request);
+        $mascota = Almacen::find($id);
+
+        $request->validate([
+            'nombre' => 'required|string|max:255',
+
+
+            'descripcion' => 'required|string|max:100',
+        ]);
+
+        $data = $request->all();
+
+
+
+        $mascota->update($data);
+        return response()->json(['success' => true, 'message' => 'Almacen actualizada con éxito']);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Almacen $almacen)
+    public function destroy($id)
     {
-        //
-    }
+        $mascota = Almacen::findOrFail($id);
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Almacen $almacen)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Almacen $almacen)
-    {
-        //
+        $mascota->delete();
+        return response()->json(['success' => true, 'message' => 'Almacen eliminada con éxito']);
     }
 }

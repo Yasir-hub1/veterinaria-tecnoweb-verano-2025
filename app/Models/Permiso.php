@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Permiso extends Model
 {
     public $timestamps = false;
-    protected $tableName = "permisos";
+    protected $table = "permisos";
     protected $fillable = ["id",'nombre'];
 
     public function roles()

@@ -9,7 +9,7 @@ class AjusteInventario extends Model
 {
     use HasFactory;
     public $timestamps = false;
-    protected $tableName = "ajustes_inventario";
+    protected $table = "ajustes_inventario";
     protected $fillable = ['usuario_id',"tipo","fecha","glosa"];
 
 }

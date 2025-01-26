@@ -9,6 +9,6 @@ class NotaCompra extends Model
 {
     use HasFactory;
     public $timestamps = false;
-    protected $tableName = "notas_compras";
+    protected $table = "notas_compras";
     protected $fillable = ['usuario_id',"proveedor_id","fecha","glosa"];
 }

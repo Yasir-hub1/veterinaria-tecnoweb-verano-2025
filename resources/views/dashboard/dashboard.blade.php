@@ -173,9 +173,14 @@
                     <i class="fas fa-stethoscope"></i>
                     <span>Servicios</span>
                 </a>
-                <a href="#" class="nav-item">
+                <a href="{{ route('inventario.index') }}" class="nav-item {{ Request::is('inventario*') ? 'active' : '' }}">
                     <i class="fas fa-warehouse"></i>
                     <span>Inventario</span>
+                </a>
+
+                <a href="{{ route('almacenes.index') }}" class="nav-item {{ Request::is('almacenes*') ? 'active' : '' }}">
+                    <i class="fas fa-warehouse"></i>
+                    <span>Almacenes</span>
                 </a>
                 <a href="#" class="nav-item">
                     <i class="fas fa-cash-register"></i>

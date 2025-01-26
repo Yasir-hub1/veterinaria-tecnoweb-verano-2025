@@ -10,7 +10,7 @@ class ProductoAlmacen extends Model
     use HasFactory;
 
     public $timestamps = false;
-    protected $tableName = "productos_almacen";
+    protected $table = "productos_almacen";
     protected $fillable = ['producto_id',"almacen_id","stock"];
 
 }

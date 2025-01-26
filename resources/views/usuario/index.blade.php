@@ -306,6 +306,7 @@
             </form>
         </div>
     </div>
+
     @include('layouts.sidebar')
     <script>
         let currentUserId = null;
@@ -389,5 +390,7 @@
             window.location.href = `/usuarios/${userId}/permisos`;
         }
     </script>
+
+
 </body>
 </html>

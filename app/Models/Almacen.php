@@ -10,6 +10,6 @@ class Almacen extends Model
     use HasFactory;
 
     public $timestamps = false;
-    protected $tableName = "almacenes";
+    protected $table = "almacenes";
     protected $fillable = ["nombre","descripcion"];
 }

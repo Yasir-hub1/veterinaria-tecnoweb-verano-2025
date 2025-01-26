@@ -1,50 +1,50 @@
-{{-- resources/views/servicios/index.blade.php --}}
+{{-- resources/views/almacenes/index.blade.php --}}
 @extends('layouts.app')
 
-@section('title', 'Gestión de servicios | Sistema Veterinario')
+@section('title', 'Gestión de almacenes | Sistema Veterinario')
 
 @section('content')
-<div class="servicio-container">
+<div class="almacen-container">
     <!-- Header Section -->
-    <div class="servicio-header">
-        <h1>Gestión de Servicios</h1>
+    <div class="almacen-header">
+        <h1>Gestión de Almacenes</h1>
         <button type="button" class="btn-add" onclick="mascotaController.openModal()">
-            <i class="fas fa-plus"></i> Nuevo Servicio
+            <i class="fas fa-plus"></i> Nuevo Almacen
         </button>
     </div>
 
     <!-- Table Section -->
-    <div class="servicio-card">
+    <div class="almacen-card">
         <div class="table-container">
-            <table class="servicio-table">
+            <table class="almacen-table">
                 <thead>
                     <tr>
-
+                        <th>#</th>
                         <th>Nombre</th>
-                        <th>Precio</th>
-                        <th>descripcion</th>
+
+                        <th>Descripcion</th>
 
                         <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse($servicios as $servicio)
+                    @forelse($almacenes as $almacen)
                         <tr>
+                            <td>{{ $almacen->id }}</td>
+                            <td>{{ $almacen->nombre }}</td>
 
-                            <td>{{ $servicio->nombre }}</td>
 
-                            <td>{{ $servicio->precio }}</td>
-                            <td>{{ $servicio->descripcion }}</td>
+                            <td>{{ $almacen->descripcion }}</td>
 
                             <td>
                                 <div class="action-buttons">
-                                    <button class="btn-edit" onclick="mascotaController.openModal({{ $servicio->id }})">
+                                    <button class="btn-edit" onclick="mascotaController.openModal({{ $almacen->id }})">
                                         <i class="fas fa-edit"></i>
                                     </button>
                                     <button type="button"
                                             class="btn-delete"
-                                            onclick="mascotaController.delete({{ $servicio->id }})"
-                                            title="Eliminar servicio">
+                                            onclick="mascotaController.delete({{ $almacen->id }})"
+                                            title="Eliminar almacen">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
@@ -55,11 +55,11 @@
                             <td colspan="7">
                                 <div class="empty-state">
                                     <i class="fas fa-paw"></i>
-                                    <p>No hay servicios registradas</p>
+                                    <p>No hay almacenes registradas</p>
                                     <button type="button"
                                             class="btn-add"
                                             onclick="mascotaController.openModal()">
-                                        Agregar Primera Servicio
+                                        Agregar Primera Almacen
                                     </button>
                                 </div>
                             </td>
@@ -76,15 +76,15 @@
     <div class="modal-backdrop"></div>
     <div class="modal-content">
         <div class="modal-header">
-            <h2 class="modal-title">Nuevo Servicio</h2>
+            <h2 class="modal-title">Nuevo Almacen</h2>
             <button type="button" class="btn-close" onclick="mascotaController.closeModal()">
                 <i class="fas fa-times"></i>
             </button>
         </div>
 
-        <form id="mascotaForm" class="servicio-form" novalidate>
+        <form id="mascotaForm" class="almacen-form" novalidate>
             @csrf
-            <input type="hidden" id="servicio_id" name="id">
+            <input type="hidden" id="almacen_id" name="id">
             <div class="modal-body">
 
 
@@ -102,18 +102,6 @@
                     </div>
 
 
-
-
-                    <div class="form-group">
-                        <label for="precio">Precio</label>
-                        <input type="text"
-                               id="precio"
-                               name="precio"
-                               required
-                               maxlength="100"
-                               autocomplete="off">
-                        <span class="error-message"></span>
-                    </div>
 
                     <div class="form-group">
                         <label for="descripcion">Descripcion</label>
@@ -181,7 +169,7 @@
             this.resetForm();
 
             const title = this.modal.querySelector('.modal-title');
-            title.textContent = id ? 'Editar Servicio' : 'Nuevo Servicio';
+            title.textContent = id ? 'Editar Almacen' : 'Nuevo Almacen';
 
             if (id) {
                 this.loadMascotaData(id);
@@ -205,7 +193,7 @@
 
         async loadMascotaData(id) {
             try {
-                const response = await fetch(`/servicios/${id}`);
+                const response = await fetch(`/almacenes/${id}`);
                 const data = await response.json();
 
                 if (!response.ok) throw new Error(data.message || 'Error al cargar datos');
@@ -222,10 +210,10 @@
         },
 
         fillFormData(data) {
-            document.getElementById('servicio_id').value = data.id;
+            document.getElementById('almacen_id').value = data.id;
             document.getElementById('nombre').value = data.nombre;
 
-            document.getElementById('precio').value = data.precio;
+
             document.getElementById('descripcion').value = data.descripcion;
 
             if (data.imagen) {
@@ -248,13 +236,13 @@
         const token = document.querySelector('meta[name="csrf-token"]').content;
 
         // Get the current ID from the hidden input
-        const servicioId = document.getElementById('servicio_id').value;
+        const servicioId = document.getElementById('almacen_id').value;
 
-        let url = '/servicios';
+        let url = '/almacenes';
         let method = 'POST';
 
         if (servicioId) {
-            url = `/servicios/${servicioId}`;
+            url = `/almacenes/${servicioId}`;
             formData.append('_method', 'PUT');
         }
 
@@ -307,7 +295,7 @@
 
                 'nombre': 'Ingrese el nombre',
 
-                'precio': 'Ingrese la precio',
+
                 'descripcion': 'Ingrese la descripcion'
             };
 
@@ -322,14 +310,13 @@
             });
 
 
-
             return isValid;
         },
 
         async delete(id) {
             try {
                 const result = await Swal.fire({
-                    title: '¿Eliminar servicio?',
+                    title: '¿Eliminar almacen?',
                     text: 'Esta acción no se puede deshacer',
                     icon: 'warning',
                     showCancelButton: true,
@@ -341,7 +328,7 @@
 
                 if (!result.isConfirmed) return;
 
-                const response = await fetch(`/servicios/${id}`, {
+                const response = await fetch(`/almacenes/${id}`, {
                     method: 'DELETE',
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
@@ -452,27 +439,27 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /* Layout Principal */
-    .servicio-container {
+    .almacen-container {
         max-width: 1200px;
         margin: 2rem auto;
         padding: 0 1rem;
     }
 
-    .servicio-header {
+    .almacen-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
         margin-bottom: 2rem;
     }
 
-    .servicio-header h1 {
+    .almacen-header h1 {
         font-size: 1.875rem;
         font-weight: 600;
         color: var(--text-primary);
     }
 
     /* Estilos de la Tabla */
-    .servicio-card {
+    .almacen-card {
         background-color: var(--card-background);
         border-radius: var(--radius-lg);
         box-shadow: var(--shadow-md);
@@ -484,13 +471,13 @@ document.addEventListener('DOMContentLoaded', () => {
         overflow-x: auto;
     }
 
-    .servicio-table {
+    .almacen-table {
         width: 100%;
         border-collapse: collapse;
         white-space: nowrap;
     }
 
-    .servicio-table th {
+    .almacen-table th {
         background-color: #f8fafc;
         padding: 1rem;
         text-align: left;
@@ -499,24 +486,24 @@ document.addEventListener('DOMContentLoaded', () => {
         border-bottom: 1px solid var(--border-color);
     }
 
-    .servicio-table td {
+    .almacen-table td {
         padding: 1rem;
         border-bottom: 1px solid var(--border-color);
     }
 
-    .servicio-table tbody tr:hover {
+    .almacen-table tbody tr:hover {
         background-color: #f8fafc;
     }
 
-    /* Imágenes de servicios */
-    .servicio-image-container {
+    /* Imágenes de almacenes */
+    .almacen-image-container {
         width: 48px;
         height: 48px;
         border-radius: var(--radius-md);
         overflow: hidden;
     }
 
-    .servicio-image {
+    .almacen-image {
         width: 100%;
         height: 100%;
         object-fit: cover;
@@ -642,7 +629,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /* Estilos del Formulario */
-    .servicio-form {
+    .almacen-form {
         display: flex;
         flex-direction: column;
     }
@@ -817,7 +804,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     /* Responsive Design */
     @media (max-width: 768px) {
-        .servicio-header {
+        .almacen-header {
             flex-direction: column;
             gap: 1rem;
             align-items: stretch;

@@ -10,7 +10,7 @@ class DetalleCompra extends Model
     use HasFactory;
 
     public $timestamps = false;
-    protected $tableName = "detalles_compra";
+    protected $table = "detalles_compra";
     protected $fillable = ['nota_compra_id',"productos_almacen_id","cantidad","precio"];
 
 }

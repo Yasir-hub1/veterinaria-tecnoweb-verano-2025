@@ -23,7 +23,7 @@
                         <th>Nombre</th>
                         <th>Cliente</th>
                         <th>descripcion</th>
-                        <th>stock</th>
+                        {{-- <th>stock</th> --}}
                         <th>precio</th>
                         <th>Acciones</th>
                     </tr>
@@ -41,7 +41,7 @@
                             <td>{{ $producto->nombre }}</td>
                             <td>{{ $producto->categoria->nombre }}</td>
                             <td>{{ $producto->descripcion }}</td>
-                            <td>{{ $producto->stock }}</td>
+                            {{-- <td>{{ $producto->stock }}</td> --}}
                             <td>{{ $producto->precio }}</td>
                             <td>
                                 <div class="action-buttons">
@@ -144,7 +144,7 @@
 
 
 
-                    <div class="form-group">
+                    {{-- <div class="form-group">
                         <label for="stock">Stock</label>
                         <input type="number"
                                id="stock"
@@ -153,7 +153,7 @@
                                maxlength="100"
                                autocomplete="off">
                         <span class="error-message"></span>
-                    </div>
+                    </div> --}}
 
                     <div class="form-group">
                         <label for="precio">Precio</label>
@@ -193,6 +193,8 @@
         </form>
     </div>
 </div>
+
+<x-app.footer />
 @endsection
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -286,7 +288,7 @@
             document.getElementById('nombre').value = data.nombre;
             document.getElementById('categoria_id').value = data.categoria_id;
             document.getElementById('descripcion').value = data.descripcion;
-            document.getElementById('stock').value = data.stock;
+            // document.getElementById('stock').value = data.stock;
             document.getElementById('precio').value = data.precio;
 
             if (data.imagen) {
@@ -367,7 +369,7 @@
                 'categoria_id': 'Seleccione un categoria',
                 'nombre': 'Ingrese el nombre',
                 'descripcion': 'Ingrese la descripcion',
-                'stock': 'Ingrese la stock',
+                // 'stock': 'Ingrese la stock',
                 'precio': 'Ingrese la precio'
             };
 

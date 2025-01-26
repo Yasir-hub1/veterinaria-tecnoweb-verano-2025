@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AlmacenController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MascotaController;
@@ -61,6 +62,16 @@ Route::prefix('mascotas')->group(function () {
         Route::get('/{id}', 'show')->where('id', '[0-9]+')->name('mascotas.show');
         Route::put('/{id}', 'update')->where('id', '[0-9]+')->name('mascotas.update');
         Route::delete('/{id}', 'destroy')->where('id', '[0-9]+')->name('mascotas.destroy');
+    });
+});
+
+Route::prefix('almacenes')->group(function () {
+    Route::controller(AlmacenController::class)->group(function () {
+        Route::get('/', 'index')->name('almacenes.index');
+        Route::post('/', 'store')->name('almacenes.store');
+        Route::get('/{id}', 'show')->where('id', '[0-9]+')->name('almacenes.show');
+        Route::put('/{id}', 'update')->where('id', '[0-9]+')->name('almacenes.update');
+        Route::delete('/{id}', 'destroy')->where('id', '[0-9]+')->name('almacenes.destroy');
     });
 });
 
