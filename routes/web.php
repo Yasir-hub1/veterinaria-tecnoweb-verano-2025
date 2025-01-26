@@ -8,6 +8,7 @@ use App\Http\Controllers\MascotaController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ServicioController;
 use App\Http\Controllers\InventarioController;
+use App\Http\Controllers\NotaVentaController;
 use App\Http\Controllers\OrdenServicioController;
 use App\Http\Controllers\PagoController;
 use App\Http\Controllers\ProductoAlmacenController;
@@ -132,10 +133,22 @@ Route::prefix('almacenes')->group(function () {
             Route::put('/{servicio}', 'update')->name('pagos.update');
             Route::delete('/{servicio}', 'destroy')->name('pagos.destroy');
             Route::post('/generarCobro', 'generarCobro')->name('pagos.generarCobro');
+            Route::post('/generarCobroVenta', 'generarCobroVenta')->name('pagos.generarCobro.venta');// para ventas
         });
     });
 
     // PAGOS WEB
     Route::post('/callback', CallBackPagoController::class)->name('pagos.callback');
+
+
+    Route::prefix('notaVentas')->group(function () {
+        Route::controller(NotaVentaController::class)->group(function () {
+            Route::get('/', 'index')->name('notaVentas.index');
+            Route::post('/', 'store')->name('notaVentas.store');
+            Route::get('/{servicio}', 'show')->name('notaVentas.show');
+            Route::put('/{servicio}', 'update')->name('notaVentas.update');
+            Route::delete('/{servicio}', 'destroy')->name('notaVentas.destroy');
+        });
+    });
 
 });

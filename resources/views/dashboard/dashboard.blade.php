@@ -186,7 +186,7 @@
                     <i class="fas fa-warehouse"></i>
                     <span>Almacenes</span>
                 </a>
-                <a href="#" class="nav-item">
+                <a href="{{ route('notaVentas.index') }}" class="nav-item {{ Request::is('ventas*') ? 'active' : '' }}">
                     <i class="fas fa-cash-register"></i>
                     <span>Ventas</span>
                 </a>

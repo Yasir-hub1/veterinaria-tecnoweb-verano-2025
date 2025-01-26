@@ -23,4 +23,9 @@ class ProductoAlmacen extends Model
     {
         return $this->belongsTo(Almacen::class, 'almacen_id');
     }
+
+    public function detallesVentas()
+    {
+        return $this->hasMany(DetalleVenta::class);
+    }
 }

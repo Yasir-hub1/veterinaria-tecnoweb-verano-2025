@@ -84,4 +84,8 @@ class Usuario extends Authenticatable
     {
         return $this->hasMany(OrdenServicio::class, 'usuario_id');
     }
+    public function notaVenta()
+    {
+        return $this->hasMany(NotaVenta::class, 'usuario_id');
+    }
 }

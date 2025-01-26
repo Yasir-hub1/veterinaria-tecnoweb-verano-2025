@@ -12,4 +12,14 @@ class Cliente extends Model
     protected $table = "clientes";
     protected $fillable = ['tipo',"nombre","apellido","razon_social","nit","direccion","celular","email","genero"];
 
+
+    public function mascotas()
+    {
+        return $this->hasMany(Mascota::class);
+    }
+
+    public function ventas()
+    {
+        return $this->hasMany(NotaVenta::class);
+    }
 }

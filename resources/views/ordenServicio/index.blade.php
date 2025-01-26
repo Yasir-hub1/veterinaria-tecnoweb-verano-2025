@@ -249,6 +249,7 @@
                     tcCorreo: email,
                     taPedidoDetalle:this.servicios,
                     mascotaId:this.mascota,
+                    tipoTransaccion:1// orden de servicio
                 })
             })
             .then(response => response.json())
@@ -258,6 +259,7 @@
                     document.getElementById('qrContainer').style.display = 'block';
                     document.getElementById('qrImage').src = data.qrImage;
                 } else {
+                    console.log("RESPUESA ",data)
                     alert("Pago con Tigo Money generado correctamente");
                 }
             })

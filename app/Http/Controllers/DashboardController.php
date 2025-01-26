@@ -22,7 +22,7 @@ class DashboardController extends Controller
         // Usando el nombre correcto de la tabla
         $ventasHoy = DB::table('notas_venta')
             ->whereDate('fecha', today())
-            ->sum('montototal');
+            ->sum('total');
 
         $citasPendientes = DB::table('orden_servicio')
             ->where('estado', 'pendiente')
