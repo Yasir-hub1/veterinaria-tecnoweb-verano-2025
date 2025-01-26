@@ -1,52 +1,60 @@
-{{-- resources/views/servicios/index.blade.php --}}
+{{-- resources/views/ordenServicios/index.blade.php --}}
 @extends('layouts.app')
 
-@section('title', 'Gestión de servicios | Sistema Veterinario')
+@section('title', 'Gestión de ordenServicios | Sistema Veterinario')
 
 @section('content')
-<div class="servicio-container">
+<div class="ordenServicio-container">
     <!-- Header Section -->
-    <div class="servicio-header">
-        <h1>Gestión de Servicios</h1>
-        <button type="button" class="btn-add" onclick="mascotaController.openModal()">
-            <i class="fas fa-plus"></i> Nuevo Servicio
+    <div class="ordenServicio-header">
+        <h1>Gestión de Orden de Servicios</h1>
+        <button type="button" class="btn-add" onclick="ordenServicioController.openModal()">
+            <i class="fas fa-plus"></i> Nueva Orden
         </button>
     </div>
 
     <!-- Table Section -->
-    <div class="servicio-card">
+    <div class="ordenServicio-card">
         <div class="table-container">
-            <table class="servicio-table">
+            <table class="ordenServicio-table">
                 <thead>
                     <tr>
 
-                        <th>Nombre</th>
-                        <th>Precio</th>
-                        <th>descripcion</th>
-
+                        <th>Usuario</th>
+                        <th>Mascota</th>
+                        <th>fecha</th>
+                        <th>tipo de pago</th>
+                        <th>estado</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse($servicios as $servicio)
+                    @forelse($ordenServicios as $ordenServicio)
                         <tr>
+                            <td>{{ $ordenServicio->usuario->name }}</td>
+                            <td>{{ $ordenServicio->mascota->nombre }}</td>
 
-                            <td>{{ $servicio->nombre }}</td>
+                            <td>{{ $ordenServicio->fecha }}</td>
+                            <td>{{ $ordenServicio->tipopago == 1 ? 'Pago con QR' : ($ordenServicio->tipopago == 2 ? 'Pago con Tigo Money' : 'Método desconocido') }}</td>
+                            <td style="color: {{ $ordenServicio->estado == 1 ? 'green' : ($ordenServicio->estado == 2 ? 'red' : 'black') }}">
+                                {{ $ordenServicio->estado == 1 ? 'Activo' : ($ordenServicio->estado == 2 ? 'Anulado' : 'Error') }}
+                            </td>
 
-                            <td>{{ $servicio->precio }}</td>
-                            <td>{{ $servicio->descripcion }}</td>
 
                             <td>
                                 <div class="action-buttons">
-                                    <button class="btn-edit" onclick="mascotaController.openModal({{ $servicio->id }})">
+                                    {{-- <button class="btn-edit" onclick="ordenServicioController.openModal({{ $ordenServicio->id }})">
                                         <i class="fas fa-edit"></i>
-                                    </button>
+                                    </button> --}}
+                                    @if ($ordenServicio->estado == 1)
                                     <button type="button"
-                                            class="btn-delete"
-                                            onclick="mascotaController.delete({{ $servicio->id }})"
-                                            title="Eliminar servicio">
+                                        class="btn-delete"
+                                        onclick="ordenServicioController.delete({{ $ordenServicio->id }})"
+                                        title="Eliminar ordenServicio">
                                         <i class="fas fa-trash"></i>
                                     </button>
+                                @endif
+
                                 </div>
                             </td>
                         </tr>
@@ -55,11 +63,11 @@
                             <td colspan="7">
                                 <div class="empty-state">
                                     <i class="fas fa-paw"></i>
-                                    <p>No hay servicios registradas</p>
+                                    <p>No hay ordenServicios registradas</p>
                                     <button type="button"
                                             class="btn-add"
-                                            onclick="mascotaController.openModal()">
-                                        Agregar Primera Servicio
+                                            onclick="ordenServicioController.openModal()">
+                                        Agregar Primera Orden de Servicio
                                     </button>
                                 </div>
                             </td>
@@ -72,277 +80,256 @@
 </div>
 
 <!-- Modal Form -->
-<div class="modal" id="mascotaModal" tabindex="-1">
+<div class="modal" id="ordenServicioModal" tabindex="-1">
     <div class="modal-backdrop"></div>
     <div class="modal-content">
         <div class="modal-header">
-            <h2 class="modal-title">Nuevo Servicio</h2>
-            <button type="button" class="btn-close" onclick="mascotaController.closeModal()">
+            <h2 class="modal-title">Nueva Orden de Servicio</h2>
+            <button type="button" class="btn-close" onclick="ordenServicioController.closeModal()">
                 <i class="fas fa-times"></i>
             </button>
         </div>
 
-        <form id="mascotaForm" class="servicio-form" novalidate>
+        <form id="ordenServicioForm" class="ordenServicio-form" novalidate>
             @csrf
-            <input type="hidden" id="servicio_id" name="id">
-            <div class="modal-body">
+            <input type="hidden" id="orden_id" name="id">
 
+            <div class="modal-body" id="modalBody">
 
-                <!-- Información Principal -->
-                <div class="form-section form-grid">
-                    <div class="form-group">
-                        <label for="nombre">Nombre</label>
-                        <input type="text"
-                               id="nombre"
-                               name="nombre"
-                               required
-                               maxlength="255"
-                               autocomplete="off">
-                        <span class="error-message"></span>
-                    </div>
-
-
-
-
-                    <div class="form-group">
-                        <label for="precio">Precio</label>
-                        <input type="text"
-                               id="precio"
-                               name="precio"
-                               required
-                               maxlength="100"
-                               autocomplete="off">
-                        <span class="error-message"></span>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="descripcion">Descripcion</label>
-                        <input type="text"
-                               id="descripcion"
-                               name="descripcion"
-                               required
-                               min="0"
-                               max="100">
-                        <span class="error-message"></span>
-                    </div>
+                <!-- Selección de servicios -->
+                <div class="form-group">
+                    <label for="servicioSelect">Seleccionar Servicio</label>
+                    <select id="servicioSelect" name="servicio_id">
+                        <option value="">Seleccione un servicio</option>
+                        @foreach ($servicios as $servicio)
+                            <option value="{{ $servicio->id }}" data-precio="{{ $servicio->precio }}">
+                                {{ $servicio->nombre }} - ${{ $servicio->precio }}
+                            </option>
+                        @endforeach
+                    </select>
                 </div>
+
+                 <!-- Selección de Mascotas -->
+                 <div class="form-group">
+                    <label for="mascotaSelect">Seleccionar Mascota</label>
+                    <select id="mascotaSelect" name="mascota_id">
+                        <option value="">Seleccione un mascota</option>
+                        @foreach ($mascotas as $mascota)
+                            <option value="{{ $mascota->id }}" data-mascota="{{ $mascota->nombre }}">
+                                {{ $mascota->nombre }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <button type="button" class="btn-add" onclick="ordenServicioController.agregarServicio()">
+                    Añadir Servicio
+                </button>
+
+                <!-- Tabla de servicios añadidos -->
+                <div class="table-container">
+                    <table class="orden-servicio-table" style="width: 100%; border-collapse: separate; border-spacing: 10px;">
+                        <thead>
+                            <tr>
+                                <th style="padding: 10px; text-align: left;">Servicio</th>
+                                <th style="padding: 10px; text-align: left;">Precio</th>
+                                <th style="padding: 10px; text-align: left;">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="serviciosSeleccionados">
+                            <!-- Aquí se añadirán los servicios dinámicamente -->
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td style="padding: 10px;"><strong>Total:</strong></td>
+                                <td style="padding: 10px;" id="totalPrecio">$0.00</td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <!-- Selección de método de pago -->
+                <div class="form-group">
+                    <label for="metodoPagoSelect">Método de Pago</label>
+                    <select id="metodoPagoSelect" name="tnTipoServicio">
+                        <option value="1">Pago con QR</option>
+                        <option value="2">Pago con Tigo Money</option>
+                    </select>
+                </div>
+
+                <!-- Botón para generar pago -->
+                <button type="button" class="btn-pay" onclick="ordenServicioController.generarPago()">
+                    Generar Pago
+                </button>
+
+
+            </div>
+            <!-- Contenedor de QR -->
+            <div id="qrContainer" style="display: none; text-align: center; margin-top: 10px;">
+                <img id="qrImage" src="" alt="Código QR">
             </div>
 
             <div class="modal-footer">
-                <button type="button"
-                        class="btn-cancel"
-                        onclick="mascotaController.closeModal()">
+                <button type="button" class="btn-cancel" onclick="ordenServicioController.closeModal()">
                     Cancelar
                 </button>
-                <button type="submit" class="btn-save">
-                    <span class="button-text">Guardar</span>
+                {{-- <button type="submit" class="btn-save">
+                    <span class="button-text">Guardar Orden</span>
                     <span class="button-loader"></span>
-                </button>
+                </button> --}}
             </div>
         </form>
     </div>
 </div>
+
+
+
 <x-app.footer />
 @endsection
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-    const mascotaController = {
+<script>
+
+    const ordenServicioController = {
         modal: null,
         form: null,
-        currentId: null,
-        imagePreview: null,
-        submitButton: null,
-        isSubmitting: false,
+        servicios: [],
+        mascota:0,
+        total: 0,
 
         init() {
-            this.modal = document.getElementById('mascotaModal');
-            this.form = document.getElementById('mascotaForm');
-            this.imagePreview = document.getElementById('imagePreview');
-            this.submitButton = this.form.querySelector('button[type="submit"]');
+            this.modal = document.getElementById('ordenServicioModal');
+            this.form = document.getElementById('ordenServicioForm');
 
             this.setupEventListeners();
         },
 
         setupEventListeners() {
-            // Manejo del formulario
             this.form.addEventListener('submit', (e) => {
                 e.preventDefault();
-                if (!this.isSubmitting) {
-                    this.handleSubmit(e);
-                }
+                this.handleSubmit();
             });
-
-
         },
 
-        openModal(id = null) {
-            this.currentId = id;
+        openModal() {
             this.resetForm();
-
-            const title = this.modal.querySelector('.modal-title');
-            title.textContent = id ? 'Editar Servicio' : 'Nuevo Servicio';
-
-            if (id) {
-                this.loadMascotaData(id);
-            }
-
             this.modal.classList.add('active');
         },
 
         closeModal() {
             this.modal.classList.remove('active');
+            document.getElementById('modalBody').style.display = 'block';
+            document.getElementById('qrContainer').style.display = 'none';
+            document.getElementById('qrImage').src ="";
             this.resetForm();
         },
 
         resetForm() {
             this.form.reset();
-
-            this.clearErrors();
-            this.enableSubmitButton();
-            this.currentId = null;
+            this.servicios = [];
+            this.total = 0;
+            this.actualizarTabla();
         },
 
-        async loadMascotaData(id) {
-            try {
-                const response = await fetch(`/servicios/${id}`);
-                const data = await response.json();
+        generarPago: function() {
+            const metodoPago = document.getElementById('metodoPagoSelect').value;
+            const total = document.getElementById('totalPrecio').innerText.replace('$', '');
+            const email = "usuario@example.com"; // Aquí debes pasar el email del usuario
 
-                if (!response.ok) throw new Error(data.message || 'Error al cargar datos');
-
-                this.fillFormData(data);
-            } catch (error) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: error.message
-                });
-                this.closeModal();
-            }
-        },
-
-        fillFormData(data) {
-            document.getElementById('servicio_id').value = data.id;
-            document.getElementById('nombre').value = data.nombre;
-
-            document.getElementById('precio').value = data.precio;
-            document.getElementById('descripcion').value = data.descripcion;
-
-            if (data.imagen) {
-                this.imagePreview.src = `/storage/${data.imagen}`;
-            }
-        },
-
-
-
-        async handleSubmit(event) {
-    event.preventDefault();
-
-    try {
-        if (!this.validateForm()) {
-            return;
-        }
-
-        this.disableSubmitButton();
-        const formData = new FormData(this.form);
-        const token = document.querySelector('meta[name="csrf-token"]').content;
-
-        // Get the current ID from the hidden input
-        const servicioId = document.getElementById('servicio_id').value;
-
-        let url = '/servicios';
-        let method = 'POST';
-
-        if (servicioId) {
-            url = `/servicios/${servicioId}`;
-            formData.append('_method', 'PUT');
-        }
-
-        const response = await fetch(url, {
-            method: method,
-            body: formData,
-            headers: {
-                'X-CSRF-TOKEN': token,
-                'Accept': 'application/json'
-            }
-        });
-
-        const result = await response.json();
-
-        if (!response.ok) {
-            if (response.status === 422) {
-                Object.keys(result.errors).forEach(field => {
-                    this.showFieldError(field, result.errors[field][0]);
-                });
-                throw new Error('Please check the form fields.');
-            }
-            throw new Error(result.message || 'Error processing request');
-        }
-
-        await Swal.fire({
-            icon: 'success',
-            title: '¡Éxito!',
-            text: result.message,
-            timer: 1500,
-            showConfirmButton: false
-        });
-
-        this.closeModal();
-        setTimeout(() => window.location.reload(), 1500);
-
-    } catch (error) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: error.message
-        });
-    } finally {
-        this.enableSubmitButton();
-    }
-},
-
-        validateForm() {
-            let isValid = true;
-            const requiredFields = {
-
-                'nombre': 'Ingrese el nombre',
-
-                'precio': 'Ingrese la precio',
-                'descripcion': 'Ingrese la descripcion'
-            };
-
-            Object.entries(requiredFields).forEach(([field, message]) => {
-                const input = document.getElementById(field);
-                const value = input.value.trim();
-
-                if (!value) {
-                    this.showFieldError(field, message);
-                    isValid = false;
+            fetch("{{ route('pagos.generarCobro') }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": document.querySelector('input[name="_token"]').value
+                },
+                body: JSON.stringify({
+                    tnTipoServicio: metodoPago,
+                    tnMonto: total,
+                    tcCorreo: email,
+                    taPedidoDetalle:this.servicios,
+                    mascotaId:this.mascota,
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (metodoPago == 1) {
+                    document.getElementById('modalBody').style.display = 'none';
+                    document.getElementById('qrContainer').style.display = 'block';
+                    document.getElementById('qrImage').src = data.qrImage;
+                } else {
+                    alert("Pago con Tigo Money generado correctamente");
                 }
+            })
+            .catch(error => console.error("Error al generar pago", error));
+        },
+
+        agregarServicio() {
+            const select = document.getElementById('servicioSelect');
+            const mascotaselect = document.getElementById('mascotaSelect');
+            const servicioId = select.value;
+            const mascotasId = mascotaselect.value;
+            const servicioNombre = select.options[select.selectedIndex].text;
+            const precio = parseFloat(select.options[select.selectedIndex].getAttribute('data-precio'));
+
+            if (!servicioId) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Seleccione un servicio',
+                    text: 'Debe elegir un servicio antes de agregarlo.'
+                });
+                return;
+            }
+            this.mascota=mascotasId;
+            this.servicios.push({ id: servicioId, nombre: servicioNombre, precio: precio });
+            this.total += precio;
+            this.actualizarTabla();
+        },
+
+        eliminarServicio(index) {
+            this.total -= this.servicios[index].precio;
+            this.servicios.splice(index, 1);
+            this.actualizarTabla();
+        },
+
+        actualizarTabla() {
+            const tbody = document.getElementById('serviciosSeleccionados');
+            tbody.innerHTML = '';
+
+            this.servicios.forEach((servicio, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${servicio.nombre}</td>
+                    <td>$${servicio.precio.toFixed(2)}</td>
+                    <td>
+                        <button class="btn-delete" onclick="ordenServicioController.eliminarServicio(${index})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
             });
 
-
-
-            return isValid;
+            document.getElementById('totalPrecio').textContent = `$${this.total.toFixed(2)}`;
         },
 
         async delete(id) {
             try {
                 const result = await Swal.fire({
-                    title: '¿Eliminar servicio?',
+                    title: '¿Anular Orden?',
                     text: 'Esta acción no se puede deshacer',
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#dc3545',
                     cancelButtonColor: '#6c757d',
-                    confirmButtonText: 'Sí, eliminar',
+                    confirmButtonText: 'Sí, Anular',
                     cancelButtonText: 'Cancelar'
                 });
 
                 if (!result.isConfirmed) return;
 
-                const response = await fetch(`/servicios/${id}`, {
-                    method: 'DELETE',
+                const response = await fetch(`/ordenServicios/${id}`, {
+                    method: 'PUT',
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                         'Accept': 'application/json'
@@ -355,13 +342,13 @@
 
                 Swal.fire({
                     icon: 'success',
-                    title: '¡Eliminado!',
+                    title: '¡Anulado!',
                     text: data.message,
                     timer: 1500,
                     showConfirmButton: false
                 });
 
-                setTimeout(() => window.location.reload(), 1500);
+                setTimeout(() => window.location.reload(), 1000);
 
             } catch (error) {
                 Swal.fire({
@@ -372,47 +359,63 @@
             }
         },
 
-        showFieldError(field, message) {
-            const input = document.getElementById(field);
-            if (input) {
-                input.classList.add('is-invalid');
-                const errorElement = input.nextElementSibling;
-                if (errorElement && errorElement.classList.contains('error-message')) {
-                    errorElement.textContent = message;
+        async handleSubmit() {
+            try {
+                if (this.servicios.length === 0) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'No hay servicios',
+                        text: 'Debe agregar al menos un servicio antes de guardar.'
+                    });
+                    return;
                 }
+
+                const formData = new FormData(this.form);
+                formData.append('servicios', JSON.stringify(this.servicios));
+                formData.append('total', this.total);
+
+                const token = document.querySelector('meta[name="csrf-token"]').content;
+
+                const response = await fetch('/ordenServicios', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': token,
+                        'Accept': 'application/json'
+                    }
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.message || 'Error al guardar la orden');
+                }
+
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Orden Guardada!',
+                    text: result.message,
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+
+                this.closeModal();
+                setTimeout(() => window.location.reload(), 1500);
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: error.message
+                });
             }
-        },
-
-        clearErrors() {
-            this.form.querySelectorAll('.is-invalid').forEach(input => {
-                input.classList.remove('is-invalid');
-            });
-            this.form.querySelectorAll('.error-message').forEach(span => {
-                span.textContent = '';
-            });
-        },
-
-        disableSubmitButton() {
-            this.isSubmitting = true;
-            this.submitButton.disabled = true;
-            this.submitButton.innerHTML = `
-                <span class="button-loader"></span>
-                <span class="button-text">Guardando...</span>
-            `;
-        },
-
-        enableSubmitButton() {
-            this.isSubmitting = false;
-            this.submitButton.disabled = false;
-            this.submitButton.innerHTML = '<span class="button-text">Guardar</span>';
         }
     };
 
-// Inicializar el controlador cuando el DOM esté listo
-document.addEventListener('DOMContentLoaded', () => {
-    mascotaController.init();
-});
+    document.addEventListener('DOMContentLoaded', () => {
+        ordenServicioController.init();
+    });
 </script>
+
 
 <style>
 
@@ -452,27 +455,28 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /* Layout Principal */
-    .servicio-container {
-        max-width: 1200px;
-        margin: 2rem auto;
-        padding: 0 1rem;
-    }
 
-    .servicio-header {
+
+    #qrImage {
+    width: 350px;  /* Ajusta el tamaño como desees */
+    height: auto;
+}
+
+    .ordenServicio-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
         margin-bottom: 2rem;
     }
 
-    .servicio-header h1 {
+    .ordenServicio-header h1 {
         font-size: 1.875rem;
         font-weight: 600;
         color: var(--text-primary);
     }
 
     /* Estilos de la Tabla */
-    .servicio-card {
+    .ordenServicio-card {
         background-color: var(--card-background);
         border-radius: var(--radius-lg);
         box-shadow: var(--shadow-md);
@@ -484,13 +488,13 @@ document.addEventListener('DOMContentLoaded', () => {
         overflow-x: auto;
     }
 
-    .servicio-table {
+    .ordenServicio-table {
         width: 100%;
         border-collapse: collapse;
         white-space: nowrap;
     }
 
-    .servicio-table th {
+    .ordenServicio-table th {
         background-color: #f8fafc;
         padding: 1rem;
         text-align: left;
@@ -499,24 +503,24 @@ document.addEventListener('DOMContentLoaded', () => {
         border-bottom: 1px solid var(--border-color);
     }
 
-    .servicio-table td {
+    .ordenServicio-table td {
         padding: 1rem;
         border-bottom: 1px solid var(--border-color);
     }
 
-    .servicio-table tbody tr:hover {
+    .ordenServicio-table tbody tr:hover {
         background-color: #f8fafc;
     }
 
-    /* Imágenes de servicios */
-    .servicio-image-container {
+    /* Imágenes de ordenServicios */
+    .ordenServicio-image-container {
         width: 48px;
         height: 48px;
         border-radius: var(--radius-md);
         overflow: hidden;
     }
 
-    .servicio-image {
+    .ordenServicio-image {
         width: 100%;
         height: 100%;
         object-fit: cover;
@@ -642,7 +646,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /* Estilos del Formulario */
-    .servicio-form {
+    .ordenServicio-form {
         display: flex;
         flex-direction: column;
     }
@@ -817,7 +821,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     /* Responsive Design */
     @media (max-width: 768px) {
-        .servicio-header {
+        .ordenServicio-header {
             flex-direction: column;
             gap: 1rem;
             align-items: stretch;
@@ -831,6 +835,14 @@ document.addEventListener('DOMContentLoaded', () => {
             margin: 1rem;
             max-height: calc(100vh - 2rem);
             overflow-y: auto;
+        }
+        .modal-header,
+        .modal-footer {
+            position: sticky;
+            top: 0;
+            left: 0;
+            z-index: 10;  /* Asegura que el encabezado y pie estén por encima del contenido */
+            background-color: #fff; /* Fonde de fondo blanco para que el texto no se mezcle */
         }
 
         .action-buttons {

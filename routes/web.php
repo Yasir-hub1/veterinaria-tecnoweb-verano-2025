@@ -2,16 +2,20 @@
 
 use App\Http\Controllers\AlmacenController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CallBackPagoController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MascotaController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ServicioController;
 use App\Http\Controllers\InventarioController;
+use App\Http\Controllers\OrdenServicioController;
+use App\Http\Controllers\PagoController;
 use App\Http\Controllers\ProductoAlmacenController;
 use App\Http\Controllers\VentaController;
 use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UsuarioController;
+use App\Models\OrdenServicio;
 use App\Models\ProductoAlmacen;
 
 // Redirect root to login
@@ -98,7 +102,7 @@ Route::prefix('almacenes')->group(function () {
         });
     });
 
-    // Service Management Routes
+
     Route::prefix('servicios')->group(function () {
         Route::controller(ServicioController::class)->group(function () {
             Route::get('/', 'index')->name('servicios.index');
@@ -108,4 +112,30 @@ Route::prefix('almacenes')->group(function () {
             Route::delete('/{servicio}', 'destroy')->name('servicios.destroy');
         });
     });
+
+
+     Route::prefix('ordenServicios')->group(function () {
+        Route::controller(OrdenServicioController::class)->group(function () {
+            Route::get('/', 'index')->name('ordenServicios.index');
+            // Route::post('/', 'store')->name('ordenServicios.store');
+            // Route::get('/{servicio}', 'show')->name('ordenServicios.show');
+            Route::put('/{servicio}', 'update')->name('ordenServicios.update');
+            // Route::delete('/{servicio}', 'destroy')->name('ordenServicios.destroy');
+        });
+    });
+
+    Route::prefix('pagos')->group(function () {
+        Route::controller(PagoController::class)->group(function () {
+            Route::get('/', 'index')->name('pagos.index');
+            Route::post('/', 'store')->name('pagos.store');
+            Route::get('/{servicio}', 'show')->name('pagos.show');
+            Route::put('/{servicio}', 'update')->name('pagos.update');
+            Route::delete('/{servicio}', 'destroy')->name('pagos.destroy');
+            Route::post('/generarCobro', 'generarCobro')->name('pagos.generarCobro');
+        });
+    });
+
+    // PAGOS WEB
+    Route::post('/callback', CallBackPagoController::class)->name('pagos.callback');
+
 });

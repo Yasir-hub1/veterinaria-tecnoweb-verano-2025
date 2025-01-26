@@ -79,4 +79,9 @@ class Usuario extends Authenticatable
     {
         return $this->roles->flatMap->permisos->contains('nombre', $permissionName);
     }
+
+    public function ordenes()
+    {
+        return $this->hasMany(OrdenServicio::class, 'usuario_id');
+    }
 }

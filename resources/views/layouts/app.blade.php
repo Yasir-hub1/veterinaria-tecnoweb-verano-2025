@@ -27,6 +27,7 @@
         body {
             font-family: 'Arial', sans-serif;
             background: #f5f6fa;
+            /* overflow: hidden; */
         }
 
         .main-content {

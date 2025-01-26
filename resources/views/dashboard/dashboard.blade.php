@@ -173,6 +173,10 @@
                     <i class="fas fa-stethoscope"></i>
                     <span>Servicios</span>
                 </a>
+                <a href="{{ route('ordenServicios.index') }}" class="nav-item {{ Request::is('ordenServicios*') ? 'active' : '' }}">
+                    <i class="fas fa-stethoscope"></i>
+                    <span>Ordenes de servicios</span>
+                </a>
                 <a href="{{ route('inventarios.index') }}" class="nav-item {{ Request::is('inventarios*') ? 'active' : '' }}">
                     <i class="fas fa-warehouse"></i>
                     <span>Inventario</span>

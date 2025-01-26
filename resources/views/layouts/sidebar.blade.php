@@ -20,6 +20,10 @@
                 <i class="fas fa-box"></i>
                 <span>Productos</span>
             </a>
+            <a href="{{ route('ordenServicios.index') }}" class="nav-item {{ Request::is('ordenServicios*') ? 'active' : '' }}">
+                <i class="fas fa-stethoscope"></i>
+                <span>Ordenes de servicios</span>
+            </a>
             <a href="{{ route('servicios.index') }}" class="nav-item {{ Request::is('servicios*') ? 'active' : '' }}">
                 <i class="fas fa-stethoscope"></i>
                 <span>Servicios</span>

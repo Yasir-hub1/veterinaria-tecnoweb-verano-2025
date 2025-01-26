@@ -16,4 +16,9 @@ class Mascota extends Model
     {
         return $this->belongsTo(Cliente::class, 'cliente_id');
     }
+
+    public function ordenes()
+    {
+        return $this->hasMany(OrdenServicio::class, 'mascota_id');
+    }
 }

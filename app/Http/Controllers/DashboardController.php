@@ -24,7 +24,7 @@ class DashboardController extends Controller
             ->whereDate('fecha', today())
             ->sum('montototal');
 
-        $citasPendientes = DB::table('notas_servicio')
+        $citasPendientes = DB::table('orden_servicio')
             ->where('estado', 'pendiente')
             ->count();
 
