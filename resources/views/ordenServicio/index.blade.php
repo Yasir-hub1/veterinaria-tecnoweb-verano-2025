@@ -1,54 +1,50 @@
-{{-- resources/views/inventarios/index.blade.php --}}
+{{-- resources/views/servicios/index.blade.php --}}
 @extends('layouts.app')
 
-@section('title', 'Gestión de ingresos | Sistema Veterinario')
+@section('title', 'Gestión de servicios | Sistema Veterinario')
 
 @section('content')
-<div class="ingreso-container">
+<div class="servicio-container">
     <!-- Header Section -->
-    <div class="ingreso-header">
-        <h1>Ingreso de Inventarios</h1>
+    <div class="servicio-header">
+        <h1>Gestión de Servicios</h1>
         <button type="button" class="btn-add" onclick="mascotaController.openModal()">
-            <i class="fas fa-plus"></i> Nuevo Ingreso
+            <i class="fas fa-plus"></i> Nuevo Servicio
         </button>
     </div>
 
     <!-- Table Section -->
-    <div class="ingreso-card">
+    <div class="servicio-card">
         <div class="table-container">
-            <table class="ingreso-table">
+            <table class="servicio-table">
                 <thead>
                     <tr>
-                        <th>#</th>
-                        <th>Producto</th>
-                        <th>Almacen</th>
-                        <th>stock</th>
 
-
+                        <th>Nombre</th>
+                        <th>Precio</th>
+                        <th>descripcion</th>
 
                         <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse($ingresos as $ingreso)
+                    @forelse($servicios as $servicio)
                         <tr>
-                            <td>{{ $ingreso->id }}</td>
-                            <td>{{ $ingreso->producto->nombre }}</td>
-                            <td>{{ $ingreso->almacen->nombre }}</td>
 
+                            <td>{{ $servicio->nombre }}</td>
 
-
-                            <td>{{ $ingreso->stock }}</td>
+                            <td>{{ $servicio->precio }}</td>
+                            <td>{{ $servicio->descripcion }}</td>
 
                             <td>
                                 <div class="action-buttons">
-                                    <button class="btn-edit" onclick="mascotaController.openModal({{ $ingreso->id }})">
+                                    <button class="btn-edit" onclick="mascotaController.openModal({{ $servicio->id }})">
                                         <i class="fas fa-edit"></i>
                                     </button>
                                     <button type="button"
                                             class="btn-delete"
-                                            onclick="mascotaController.delete({{ $ingreso->id }})"
-                                            title="Eliminar ingreso">
+                                            onclick="mascotaController.delete({{ $servicio->id }})"
+                                            title="Eliminar servicio">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
@@ -59,11 +55,11 @@
                             <td colspan="7">
                                 <div class="empty-state">
                                     <i class="fas fa-paw"></i>
-                                    <p>No hay ingresos registradas</p>
+                                    <p>No hay servicios registradas</p>
                                     <button type="button"
                                             class="btn-add"
                                             onclick="mascotaController.openModal()">
-                                        Agregar Primera Ingreso
+                                        Agregar Primera Servicio
                                     </button>
                                 </div>
                             </td>
@@ -80,57 +76,50 @@
     <div class="modal-backdrop"></div>
     <div class="modal-content">
         <div class="modal-header">
-            <h2 class="modal-title">Nuevo Ingreso</h2>
+            <h2 class="modal-title">Nuevo Servicio</h2>
             <button type="button" class="btn-close" onclick="mascotaController.closeModal()">
                 <i class="fas fa-times"></i>
             </button>
         </div>
 
-        <form id="mascotaForm" class="ingreso-form" novalidate>
+        <form id="mascotaForm" class="servicio-form" novalidate>
             @csrf
-            <input type="hidden" id="inventario_id" name="id">
+            <input type="hidden" id="servicio_id" name="id">
             <div class="modal-body">
 
 
                 <!-- Información Principal -->
                 <div class="form-section form-grid">
+                    <div class="form-group">
+                        <label for="nombre">Nombre</label>
+                        <input type="text"
+                               id="nombre"
+                               name="nombre"
+                               required
+                               maxlength="255"
+                               autocomplete="off">
+                        <span class="error-message"></span>
+                    </div>
+
+
 
 
                     <div class="form-group">
-                        <label for="producto_id">Producto</label>
-                        <select id="producto_id"
-                                name="producto_id"
-                                required>
-                            <option value="">Seleccionar Producto</option>
-                            @foreach($productos as $categoria)
-                                <option value="{{ $categoria->id }}">
-                                    {{ $categoria->nombre }}
-                                </option>
-                            @endforeach
-                        </select>
+                        <label for="precio">Precio</label>
+                        <input type="text"
+                               id="precio"
+                               name="precio"
+                               required
+                               maxlength="100"
+                               autocomplete="off">
                         <span class="error-message"></span>
                     </div>
 
                     <div class="form-group">
-                        <label for="almacen_id">Almacen</label>
-                        <select id="almacen_id"
-                                name="almacen_id"
-                                required>
-                            <option value="">Seleccionar Almacen</option>
-                            @foreach($almacenes as $categoria)
-                                <option value="{{ $categoria->id }}">
-                                    {{ $categoria->nombre }}
-                                </option>
-                            @endforeach
-                        </select>
-                        <span class="error-message"></span>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="stock">Stock a ingresar</label>
-                        <input type="number"
-                               id="stock"
-                               name="stock"
+                        <label for="descripcion">Descripcion</label>
+                        <input type="text"
+                               id="descripcion"
+                               name="descripcion"
                                required
                                min="0"
                                max="100">
@@ -192,7 +181,7 @@
             this.resetForm();
 
             const title = this.modal.querySelector('.modal-title');
-            title.textContent = id ? 'Editar Ingreso' : 'Nuevo Ingreso';
+            title.textContent = id ? 'Editar Servicio' : 'Nuevo Servicio';
 
             if (id) {
                 this.loadMascotaData(id);
@@ -216,7 +205,7 @@
 
         async loadMascotaData(id) {
             try {
-                const response = await fetch(`/inventarios/${id}`);
+                const response = await fetch(`/servicios/${id}`);
                 const data = await response.json();
 
                 if (!response.ok) throw new Error(data.message || 'Error al cargar datos');
@@ -233,11 +222,11 @@
         },
 
         fillFormData(data) {
-            document.getElementById('inventario_id').value = data.id;
-            document.getElementById('producto_id').value = data.producto_id;
-            document.getElementById('almacen_id').value = data.almacen_id;
+            document.getElementById('servicio_id').value = data.id;
+            document.getElementById('nombre').value = data.nombre;
 
-            document.getElementById('stock').value = data.stock;
+            document.getElementById('precio').value = data.precio;
+            document.getElementById('descripcion').value = data.descripcion;
 
             if (data.imagen) {
                 this.imagePreview.src = `/storage/${data.imagen}`;
@@ -259,13 +248,13 @@
         const token = document.querySelector('meta[name="csrf-token"]').content;
 
         // Get the current ID from the hidden input
-        const servicioId = document.getElementById('inventario_id').value;
+        const servicioId = document.getElementById('servicio_id').value;
 
-        let url = '/inventarios';
+        let url = '/servicios';
         let method = 'POST';
 
         if (servicioId) {
-            url = `/inventarios/${servicioId}`;
+            url = `/servicios/${servicioId}`;
             formData.append('_method', 'PUT');
         }
 
@@ -315,10 +304,11 @@
         validateForm() {
             let isValid = true;
             const requiredFields = {
-                'producto_id': 'Seleccione un producto',
-                'almacen_id': 'Seleccione un almacen',
 
-                'stock': 'Ingrese el stock'
+                'nombre': 'Ingrese el nombre',
+
+                'precio': 'Ingrese la precio',
+                'descripcion': 'Ingrese la descripcion'
             };
 
             Object.entries(requiredFields).forEach(([field, message]) => {
@@ -332,13 +322,14 @@
             });
 
 
+
             return isValid;
         },
 
         async delete(id) {
             try {
                 const result = await Swal.fire({
-                    title: '¿Eliminar ingreso?',
+                    title: '¿Eliminar servicio?',
                     text: 'Esta acción no se puede deshacer',
                     icon: 'warning',
                     showCancelButton: true,
@@ -350,7 +341,7 @@
 
                 if (!result.isConfirmed) return;
 
-                const response = await fetch(`/inventarios/${id}`, {
+                const response = await fetch(`/servicios/${id}`, {
                     method: 'DELETE',
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
@@ -461,27 +452,27 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /* Layout Principal */
-    .ingreso-container {
+    .servicio-container {
         max-width: 1200px;
         margin: 2rem auto;
         padding: 0 1rem;
     }
 
-    .ingreso-header {
+    .servicio-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
         margin-bottom: 2rem;
     }
 
-    .ingreso-header h1 {
+    .servicio-header h1 {
         font-size: 1.875rem;
         font-weight: 600;
         color: var(--text-primary);
     }
 
     /* Estilos de la Tabla */
-    .ingreso-card {
+    .servicio-card {
         background-color: var(--card-background);
         border-radius: var(--radius-lg);
         box-shadow: var(--shadow-md);
@@ -493,13 +484,13 @@ document.addEventListener('DOMContentLoaded', () => {
         overflow-x: auto;
     }
 
-    .ingreso-table {
+    .servicio-table {
         width: 100%;
         border-collapse: collapse;
         white-space: nowrap;
     }
 
-    .ingreso-table th {
+    .servicio-table th {
         background-color: #f8fafc;
         padding: 1rem;
         text-align: left;
@@ -508,24 +499,24 @@ document.addEventListener('DOMContentLoaded', () => {
         border-bottom: 1px solid var(--border-color);
     }
 
-    .ingreso-table td {
+    .servicio-table td {
         padding: 1rem;
         border-bottom: 1px solid var(--border-color);
     }
 
-    .ingreso-table tbody tr:hover {
+    .servicio-table tbody tr:hover {
         background-color: #f8fafc;
     }
 
-    /* Imágenes de ingresos */
-    .ingreso-image-container {
+    /* Imágenes de servicios */
+    .servicio-image-container {
         width: 48px;
         height: 48px;
         border-radius: var(--radius-md);
         overflow: hidden;
     }
 
-    .ingreso-image {
+    .servicio-image {
         width: 100%;
         height: 100%;
         object-fit: cover;
@@ -651,7 +642,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /* Estilos del Formulario */
-    .ingreso-form {
+    .servicio-form {
         display: flex;
         flex-direction: column;
     }
@@ -826,7 +817,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     /* Responsive Design */
     @media (max-width: 768px) {
-        .ingreso-header {
+        .servicio-header {
             flex-direction: column;
             gap: 1rem;
             align-items: stretch;

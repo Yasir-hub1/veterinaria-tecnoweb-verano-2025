@@ -15,4 +15,10 @@ class Producto extends Model
     {
         return $this->belongsTo(Categoria::class, 'categoria_id');
     }
+
+    public function almacenes()
+    {
+        return $this->belongsToMany(Almacen::class, 'productos_almacen', 'producto_id', 'almacen_id')
+                    ->withPivot('stock'); // Incluye el campo extra "stock"
+    }
 }

@@ -7,10 +7,12 @@ use App\Http\Controllers\MascotaController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ServicioController;
 use App\Http\Controllers\InventarioController;
+use App\Http\Controllers\ProductoAlmacenController;
 use App\Http\Controllers\VentaController;
 use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UsuarioController;
+use App\Models\ProductoAlmacen;
 
 // Redirect root to login
 Route::get('/', function () {
@@ -83,6 +85,16 @@ Route::prefix('almacenes')->group(function () {
             Route::get('/{producto}', 'show')->name('productos.show');
             Route::put('/{producto}', 'update')->name('productos.update');
             Route::delete('/{producto}', 'destroy')->name('productos.destroy');
+        });
+    });
+
+    Route::prefix('inventarios')->group(function () {
+        Route::controller(ProductoAlmacenController::class)->group(function () {
+            Route::get('/', 'index')->name('inventarios.index');
+            Route::post('/', 'store')->name('inventarios.store');
+            Route::get('/{producto}', 'show')->name('inventarios.show');
+            Route::put('/{producto}', 'update')->name('inventarios.update');
+            Route::delete('/{producto}', 'destroy')->name('inventarios.destroy');
         });
     });
 

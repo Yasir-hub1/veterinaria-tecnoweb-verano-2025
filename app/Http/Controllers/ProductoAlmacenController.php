@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Almacen;
+use App\Models\Producto;
 use App\Models\ProductoAlmacen;
 use Illuminate\Http\Request;
 
@@ -12,54 +14,67 @@ class ProductoAlmacenController extends Controller
      */
     public function index()
     {
-        //
+        $productos = Producto::with('categoria')->get();
+    $almacenes = Almacen::all();
+    $ingresos = ProductoAlmacen::with(['producto', 'almacen'])->get();
+
+    return view('inventario.index', compact("ingresos", 'productos', 'almacenes'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'producto_id' => 'required|exists:productos,id',
+            'almacen_id' => 'required|exists:almacenes,id',
+            'stock' => 'required|string|max:100',
+
+        ]);
+
+        $data = $request->all();
+
+        ProductoAlmacen::create($data);
+        return response()->json(['success' => true, 'message' => 'Ingreso de inventario registrada con éxito']);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(ProductoAlmacen $productoAlmacen)
+    public function show($id)
     {
-        //
+        $ingreso = ProductoAlmacen::findOrFail($id);
+        return response()->json($ingreso);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(ProductoAlmacen $productoAlmacen)
-    {
-        //
-    }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, ProductoAlmacen $productoAlmacen)
+
+    public function update(Request $request, $id)
     {
-        //
+        // dd($request);
+        $ingreso = ProductoAlmacen::find($id);
+
+        $request->validate([
+            'producto_id' => 'required|exists:productos,id',
+            'almacen_id' => 'required|exists:almacenes,id',
+            'stock' => 'required|string|max:100',
+
+        ]);
+
+        $data = $request->all();
+
+
+        $ingreso->update($data);
+        return response()->json(['success' => true, 'message' => 'Ingreso actualizado con éxito']);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(ProductoAlmacen $productoAlmacen)
+    public function destroy($id)
     {
-        //
+        $ingreso = ProductoAlmacen::findOrFail($id);
+
+        $ingreso->delete();
+        return response()->json(['success' => true, 'message' => 'Ingreso eliminado con éxito']);
     }
 }
