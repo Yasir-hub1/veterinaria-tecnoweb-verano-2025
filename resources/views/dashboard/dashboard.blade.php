@@ -165,7 +165,7 @@
                     <i class="fas fa-paw"></i>
                     <span>Mascotas</span>
                 </a>
-                <a href="#" class="nav-item">
+                <a href="{{ route('productos.index') }}" class="nav-item">
                     <i class="fas fa-box"></i>
                     <span>Productos</span>
                 </a>

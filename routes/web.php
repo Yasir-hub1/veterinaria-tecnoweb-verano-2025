@@ -67,11 +67,11 @@ Route::prefix('mascotas')->group(function () {
     // Product Management Routes
     Route::prefix('productos')->group(function () {
         Route::controller(ProductoController::class)->group(function () {
-            Route::get('/', 'index')->middleware('permiso:gestionar_productos');
-            Route::post('/', 'store')->middleware('permiso:gestionar_productos');
-            Route::get('/{producto}', 'show')->middleware('permiso:gestionar_productos');
-            Route::put('/{producto}', 'update')->middleware('permiso:gestionar_productos');
-            Route::delete('/{producto}', 'destroy')->middleware('permiso:gestionar_productos');
+            Route::get('/', 'index')->name('productos.index');
+            Route::post('/', 'store')->name('productos.store');
+            Route::get('/{producto}', 'show')->name('productos.show');
+            Route::put('/{producto}', 'update')->name('productos.update');
+            Route::delete('/{producto}', 'destroy')->name('productos.destroy');
         });
     });
 
