@@ -9,7 +9,7 @@ class Tipo extends Model
 {
     use HasFactory;
     public $timestamps = false;
-    protected $table = "tipo";
+    protected $table = "tipos";
     protected $fillable = ['id',"nombre"];
 
     public function usuarios()

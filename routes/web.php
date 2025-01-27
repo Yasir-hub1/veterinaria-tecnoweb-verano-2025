@@ -41,14 +41,12 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('usuarios')->group(function () {
         Route::controller(UsuarioController::class)->group(function () {
             Route::get('/', 'index')->name('usuarios.index');
-            Route::post('/', 'store')->name('usuarios.store');
-            Route::get('/{usuario}', 'show')->name('usuarios.show');
-            Route::put('/{usuario}', 'update')->name('usuarios.update');
-            Route::delete('/{usuario}', 'destroy')->name('usuarios.destroy');
+        Route::post('/', 'store')->name('usuarios.store');
+        Route::get('/{id}', 'show')->where('id', '[0-9]+')->name('usuarios.show');
+        Route::put('/{id}', 'update')->where('id', '[0-9]+')->name('usuarios.update');
+        Route::delete('/{id}', 'destroy')->where('id', '[0-9]+')->name('usuarios.destroy');
 
-            // Permission Management
-            Route::get('/{usuario}/permisos', 'getPermisos')->middleware('permiso:gestionar_permisos');
-            Route::post('/{usuario}/permisos', 'updatePermisos')->middleware('permiso:gestionar_permisos');
+
         });
     });
 

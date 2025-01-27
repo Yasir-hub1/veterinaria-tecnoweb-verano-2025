@@ -7,8 +7,8 @@
                 <script>
                     document.write(new Date().getFullYear())
                 </script>
-                ELABORADO  POR
-                <a href="#" class="text-secondary text-bold" target="_blank">GRUPO 04 SC</a>
+
+
                 <p>Visitas a esta página: {{ $visitCount }}</p>
 
             </div>

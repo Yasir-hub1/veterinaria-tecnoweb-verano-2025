@@ -7,6 +7,8 @@ use App\Models\Role;
 use App\Models\Tipo;
 use App\Models\Usuario;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class UsuarioController extends Controller
 {
@@ -23,31 +25,28 @@ class UsuarioController extends Controller
             DB::beginTransaction();
 
             $validated = $request->validate([
-                'name' => 'required|string|max:255',
+                'nombre' => 'required|string|max:255',
                 'email' => 'required|string|email|max:255|unique:usuarios',
-                'password' => 'required|string|min:8',
+
                 'cedula' => 'required|string|unique:usuarios',
                 'celular' => 'required|string',
                 'tipo_id' => 'required|exists:tipos,id',
-                'genero' => 'required|in:M,F,O'
+                'genero' => 'required'
             ]);
 
             $usuario = Usuario::create([
-                'name' => $validated['name'],
+                'name' => $validated['nombre'],
                 'email' => $validated['email'],
-                'password' => Hash::make($validated['password']),
+                'password' => Hash::make($validated['cedula']),
                 'cedula' => $validated['cedula'],
                 'celular' => $validated['celular'],
                 'tipo_id' => $validated['tipo_id'],
                 'genero' => $validated['genero'],
-                'estado' => true
+                'estado' => 1
             ]);
 
             // Asignar rol por defecto según el tipo
-            $rolPorDefecto = Role::where('nombre', 'usuario')->first();
-            if ($rolPorDefecto) {
-                $usuario->roles()->attach($rolPorDefecto->id);
-            }
+
 
             DB::commit();
 
@@ -61,46 +60,46 @@ class UsuarioController extends Controller
             DB::rollBack();
             return response()->json([
                 'success' => false,
-                'message' => 'Error al crear el usuario',
+                'message' => $e->getMessage(),
                 'error' => $e->getMessage()
             ], 500);
         }
     }
 
-    public function show(Usuario $usuario)
+    public function show($id)
     {
-        return response()->json($usuario->load(['roles', 'tipo']));
+        $usuario = Usuario::findOrFail($id);
+        return response()->json($usuario);
     }
 
-    public function update(Request $request, Usuario $usuario)
+    public function update(Request $request, $id)
     {
         try {
             DB::beginTransaction();
+            $usuario = Usuario::find($id);
+            $request->validate([
+                'nombre' => 'required|string|max:255',
+                'email' => 'required|string|email|max:255|unique:usuarios',
 
-            $validated = $request->validate([
-                'name' => 'required|string|max:255',
-                'email' => ['required', 'email', Rule::unique('usuarios')->ignore($usuario->id)],
-                'cedula' => ['required', Rule::unique('usuarios')->ignore($usuario->id)],
+                'cedula' => 'required|string|unique:usuarios',
                 'celular' => 'required|string',
                 'tipo_id' => 'required|exists:tipos,id',
-                'genero' => 'required|in:M,F,O',
-                'password' => 'nullable|string|min:8'
+                'genero' => 'required'
             ]);
 
-            $updateData = collect($validated)->except('password')->toArray();
 
-            if ($request->filled('password')) {
-                $updateData['password'] = Hash::make($request->password);
-            }
 
-            $usuario->update($updateData);
+                $request['password'] = Hash::make($request->cedula);
+
+
+            $usuario->update($request->all());
 
             DB::commit();
 
             return response()->json([
                 'success' => true,
                 'message' => 'Usuario actualizado exitosamente',
-                'user' => $usuario->fresh()->load(['roles', 'tipo'])
+
             ]);
 
         } catch (\Exception $e) {
@@ -113,15 +112,15 @@ class UsuarioController extends Controller
         }
     }
 
-    public function destroy(Usuario $usuario)
+    public function destroy($id)
     {
         try {
-            DB::beginTransaction();
 
+             $usuario=Usuario::find($id);
             // En lugar de eliminar, desactivamos el usuario
-            $usuario->update(['estado' => false]);
+            $usuario->update(['estado' => 2]);
 
-            DB::commit();
+
 
             return response()->json([
                 'success' => true,
@@ -129,7 +128,7 @@ class UsuarioController extends Controller
             ]);
 
         } catch (\Exception $e) {
-            DB::rollBack();
+
             return response()->json([
                 'success' => false,
                 'message' => 'Error al desactivar el usuario',
@@ -157,50 +156,5 @@ class UsuarioController extends Controller
         }
     }
 
-    public function asignarRoles(Request $request, Usuario $usuario)
-    {
-        try {
-            DB::beginTransaction();
 
-            $validated = $request->validate([
-                'roles' => 'required|array',
-                'roles.*' => 'exists:roles,id'
-            ]);
-
-            $usuario->roles()->sync($validated['roles']);
-
-            DB::commit();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Roles asignados exitosamente',
-                'user' => $usuario->fresh()->load('roles')
-            ]);
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json([
-                'success' => false,
-                'message' => 'Error al asignar roles',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    }
-
-    public function getRoles(Usuario $usuario)
-    {
-        return response()->json([
-            'success' => true,
-            'roles' => $usuario->roles
-        ]);
-    }
-
-    public function getAllRoles()
-    {
-        $roles = Role::all();
-        return response()->json([
-            'success' => true,
-            'roles' => $roles
-        ]);
-    }
 }

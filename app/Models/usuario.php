@@ -28,6 +28,7 @@ class Usuario extends Authenticatable
         "genero",
         'password',
         'tipo_id',
+        "estado"
 
     ];
 
