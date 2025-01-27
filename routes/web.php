@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AjusteInventarioController;
 use App\Http\Controllers\AlmacenController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CallBackPagoController;
@@ -100,6 +101,16 @@ Route::prefix('almacenes')->group(function () {
             Route::get('/{producto}', 'show')->name('inventarios.show');
             Route::put('/{producto}', 'update')->name('inventarios.update');
             Route::delete('/{producto}', 'destroy')->name('inventarios.destroy');
+        });
+    });
+
+    Route::prefix('egresoInventarios')->group(function () {
+        Route::controller(AjusteInventarioController::class)->group(function () {
+            Route::get('/', 'index')->name('egresoInventarios.index');
+            Route::post('/', 'store')->name('egresoInventarios.store');
+            Route::get('/{producto}', 'show')->name('egresoInventarios.show');
+            Route::put('/{producto}', 'update')->name('egresoInventarios.update');
+            Route::delete('/{producto}', 'destroy')->name('egresoInventarios.destroy');
         });
     });
 

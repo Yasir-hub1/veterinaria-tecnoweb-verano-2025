@@ -211,7 +211,11 @@
                         </a>
                         <a href="{{ route('inventarios.index') }}" class="nav-item">
                             <i class="fas fa-warehouse"></i>
-                            <span>Inventario</span>
+                            <span>Ingreso de Inventario</span>
+                        </a>
+                        <a href="{{ route('inventarios.index') }}" class="nav-item">
+                            <i class="fas fa-warehouse"></i>
+                            <span>Egreso de Inventario</span>
                         </a>
                         <a href="{{ route('almacenes.index') }}" class="nav-item">
                             <i class="fas fa-store"></i>

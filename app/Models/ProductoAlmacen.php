@@ -28,4 +28,6 @@ class ProductoAlmacen extends Model
     {
         return $this->hasMany(DetalleVenta::class);
     }
+
+
 }

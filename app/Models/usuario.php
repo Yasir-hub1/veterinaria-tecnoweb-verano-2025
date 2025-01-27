@@ -88,4 +88,9 @@ class Usuario extends Authenticatable
     {
         return $this->hasMany(NotaVenta::class, 'usuario_id');
     }
+
+    public function ajustesInventario()
+    {
+        return $this->hasMany(AjusteInventario::class, 'usuario_id');
+    }
 }

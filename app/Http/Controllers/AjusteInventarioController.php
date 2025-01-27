@@ -3,63 +3,114 @@
 namespace App\Http\Controllers;
 
 use App\Models\AjusteInventario;
+use App\Models\DestalleAjuste;
+use App\Models\ProductoAlmacen;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class AjusteInventarioController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $egresos =AjusteInventario::with([
+            'detalles.productoAlmacen.producto',"usuario"
+        ])->get();
+
+    $ingresos = ProductoAlmacen::with(['producto', 'almacen'])->get();
+
+    return view('egresoInventario.index', compact("ingresos", 'egresos'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        // Validación inicial de campos
+        $request->validate([
+            'ingreso_id' => 'required',
+            'tipo' => 'required|in:1,2,3',
+            'glosa' => 'required|string|max:255',
+            'stock' => 'required|numeric|min:1'
+        ]);
+
+        // Iniciamos una transacción para asegurar la integridad de los datos
+        return DB::transaction(function () use ($request) {
+            // Obtener el producto de almacén
+            $productoAlmacen = ProductoAlmacen::find($request->ingreso_id);
+
+            // Verificar si hay suficiente stock
+            if ($productoAlmacen->stock < $request->stock) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Stock insuficiente. Stock disponible: ' . $productoAlmacen->stock
+                ], 422);
+            }
+
+            // Crear el ajuste de inventario
+            $ajuste = AjusteInventario::create([
+                'usuario_id' => auth()->id(),
+                'tipo' => $request->tipo,
+                'fecha' => Carbon::now(),
+                'glosa' => $request->glosa
+            ]);
+
+            // Crear el detalle del ajuste
+            DB::table('detalles_ajuste')->insert([
+                'ajuste_id' => $ajuste->id,
+                'producto_id' => $productoAlmacen->producto_id,
+                'cantidad' => $request->stock
+            ]);
+
+            // Actualizar el stock
+            $productoAlmacen->stock -= $request->stock;
+            $productoAlmacen->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Egreso de inventario registrado con éxito'
+            ]);
+        });
     }
+
 
     /**
      * Display the specified resource.
      */
-    public function show(AjusteInventario $ajusteInventario)
+    public function show($id)
     {
-        //
+        $ingreso = ProductoAlmacen::findOrFail($id);
+        return response()->json($ingreso);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(AjusteInventario $ajusteInventario)
-    {
-        //
-    }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, AjusteInventario $ajusteInventario)
+
+    public function update(Request $request, $id)
     {
-        //
+        // dd($request);
+        $ingreso = ProductoAlmacen::find($id);
+
+        $request->validate([
+            'producto_id' => 'required|exists:productos,id',
+            'almacen_id' => 'required|exists:almacenes,id',
+            'stock' => 'required|string|max:100',
+
+        ]);
+
+        $data = $request->all();
+
+
+        $ingreso->update($data);
+        return response()->json(['success' => true, 'message' => 'Ingreso actualizado con éxito']);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(AjusteInventario $ajusteInventario)
+    public function destroy($id)
     {
-        //
+        $ingreso = ProductoAlmacen::findOrFail($id);
+
+        $ingreso->delete();
+        return response()->json(['success' => true, 'message' => 'Ingreso eliminado con éxito']);
     }
 }
