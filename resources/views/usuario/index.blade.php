@@ -94,8 +94,8 @@
                     <!-- Información Principal -->
                     <div class="form-section form-grid">
                         <div class="form-group">
-                            <label for="nombre">Nombre</label>
-                            <input type="text" id="nombre" name="nombre" required maxlength="255" autocomplete="off">
+                            <label for="name">Nombre</label>
+                            <input type="text" id="name" name="name" required maxlength="255" autocomplete="off">
                             <span class="error-message"></span>
                         </div>
 
@@ -238,7 +238,7 @@
 
         fillFormData(data) {
             document.getElementById('usuario_id').value = data.id;
-            document.getElementById('nombre').value = data.name;
+            document.getElementById('name').value = data.name;
             document.getElementById('tipo_id').value = data.tipo_id;
             document.getElementById('cedula').value = data.cedula;
             document.getElementById('celular').value = data.celular;
@@ -320,7 +320,7 @@
             let isValid = true;
             const requiredFields = {
 
-                'nombre': 'Ingrese el nombre',
+                'name': 'Ingrese el nombre',
                 'tipo_id': 'Ingrese el tipo de usuario',
                 'cedula': 'Ingrese el carnet de identidad',
                 'celular': 'Ingrese el celular',
