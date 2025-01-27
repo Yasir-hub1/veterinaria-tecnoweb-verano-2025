@@ -40,10 +40,10 @@
                 <i class="fas fa-cash-register"></i>
                 <span>Ventas</span>
             </a>
-            {{-- <a href="{{ route('reportes.index') }}" class="nav-item {{ Request::is('reportes*') ? 'active' : '' }}">
+            <a href="{{ route('reportes.index') }}" class="nav-item {{ Request::is('reportes*') ? 'active' : '' }}">
                 <i class="fas fa-chart-bar"></i>
                 <span>Reportes</span>
-            </a> --}}
+            </a>
             <a href="{{ route('logout') }}" class="nav-item"
                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                 <i class="fas fa-sign-out-alt"></i>

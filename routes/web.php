@@ -151,4 +151,9 @@ Route::prefix('almacenes')->group(function () {
         });
     });
 
+    Route::prefix('reportes')->group(function () {
+        Route::get('/ventas', [ReporteController::class, 'index'])->name('reportes.index');
+        Route::post('/ventas/generar', [ReporteController::class, 'generarReporte'])->name('reportes.generar');
+        Route::get('/ventas/exportar', [ReporteController::class, 'exportar'])->name('reportes.exportar');
+    });
 });

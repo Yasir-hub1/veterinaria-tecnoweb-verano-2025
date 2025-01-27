@@ -190,7 +190,7 @@
                     <i class="fas fa-cash-register"></i>
                     <span>Ventas</span>
                 </a>
-                <a href="#" class="nav-item">
+                <a href="{{ route('reportes.index') }}" class="nav-item {{ Request::is('reportes*') ? 'active' : '' }}">
                     <i class="fas fa-chart-bar"></i>
                     <span>Reportes</span>
                 </a>
