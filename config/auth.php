@@ -15,7 +15,7 @@ return [
 
     'defaults' => [
         'guard' => 'web',
-        'passwords' => 'usuarios',
+        'passwords' => 'usuarios',  // Esto está bien
     ],
 
     /*
@@ -38,12 +38,11 @@ return [
     'guards' => [
         'web' => [
             'driver' => 'session',
-            'provider' => 'usuarios',
+            'provider' => 'usuarios',  // Cambiado de 'users' a 'usuarios'
         ],
-
         'api' => [
             'driver' => 'token',
-            'provider' => 'usuarios',
+            'provider' => 'usuarios',  // Cambiado de 'users' a 'usuarios'
             'hash' => false,
         ],
     ],
@@ -66,12 +65,13 @@ return [
     |
     */
 
-   'providers' => [
-    'users' => [
-        'driver' => 'eloquent',
-        'model' => App\Models\Usuario::class, // Asegúrate de este cambio
+    'providers' => [
+        'usuarios' => [            // Cambiado de 'users' a 'usuarios'
+            'driver' => 'eloquent',
+            'model' => App\Models\Usuario::class,
+        ],
     ],
-],
+
 
 
     /*
@@ -101,7 +101,7 @@ return [
         ],
     ],
 
-    'password_timeout' => 10800,
+    'password_timeout' => 10800,  // Eliminada la duplicación
 
     /*
     |--------------------------------------------------------------------------
