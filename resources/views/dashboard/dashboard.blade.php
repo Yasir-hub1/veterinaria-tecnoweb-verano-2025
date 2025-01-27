@@ -240,6 +240,10 @@
                             <i class="fas fa-file-medical"></i>
                             <span>Ordenes de servicios</span>
                         </a>
+                        <a href="{{ route('pagos.index') }}" class="nav-item">
+                            <i class="fas fa-file-medical"></i>
+                            <span>Pagos</span>
+                        </a>
                     </nav>
                 </div>
 
