@@ -21,7 +21,7 @@
                     <tr>
                         <th>Imagen</th>
                         <th>Nombre</th>
-                        <th>Cliente</th>
+                        <th>Categoria</th>
                         <th>descripcion</th>
                         {{-- <th>stock</th> --}}
                         <th>precio</th>
