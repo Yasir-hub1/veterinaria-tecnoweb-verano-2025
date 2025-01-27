@@ -17,8 +17,7 @@ use App\Http\Controllers\VentaController;
 use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UsuarioController;
-use App\Models\OrdenServicio;
-use App\Models\ProductoAlmacen;
+
 
 // Redirect root to login
 Route::get('/', function () {
