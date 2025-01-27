@@ -1,55 +1,113 @@
 <div class="dashboard">
     <aside class="sidebar">
         <div class="sidebar-header">
-            <h2>Sistema Veterinaria</h2>
+            <div class="logo-container">
+                <i class="fas fa-clinic-medical"></i>
+                <h2>Sistema Veterinaria</h2>
+            </div>
         </div>
-        <nav class="nav-menu">
-            <a href="{{ route('dashboard') }}" class="nav-item {{ Request::is('dashboard') ? 'active' : '' }}">
-                <i class="fas fa-home"></i>
-                <span>Dashboard</span>
-            </a>
-            <a href="{{ route('usuarios.index') }}" class="nav-item {{ Request::is('usuarios*') ? 'active' : '' }}">
-                <i class="fas fa-users"></i>
-                <span>Usuarios</span>
-            </a>
-            <a href="{{ route('mascotas.index') }}" class="nav-item {{ Request::is('mascotas*') ? 'active' : '' }}">
-                <i class="fas fa-paw"></i>
-                <span>Mascotas</span>
-            </a>
-            <a href="{{ route('productos.index') }}" class="nav-item {{ Request::is('productos*') ? 'active' : '' }}">
-                <i class="fas fa-box"></i>
-                <span>Productos</span>
-            </a>
-            <a href="{{ route('ordenServicios.index') }}" class="nav-item {{ Request::is('ordenServicios*') ? 'active' : '' }}">
-                <i class="fas fa-stethoscope"></i>
-                <span>Ordenes de servicios</span>
-            </a>
-            <a href="{{ route('servicios.index') }}" class="nav-item {{ Request::is('servicios*') ? 'active' : '' }}">
-                <i class="fas fa-stethoscope"></i>
-                <span>Servicios</span>
-            </a>
-            <a href="{{ route('inventarios.index') }}" class="nav-item {{ Request::is('inventarios*') ? 'active' : '' }}">
-                <i class="fas fa-warehouse"></i>
-                <span>Inventario</span>
-            </a>
-            <a href="{{ route('almacenes.index') }}" class="nav-item {{ Request::is('almacenes*') ? 'active' : '' }}">
-                <i class="fas fa-warehouse"></i>
-                <span>Almacenes</span>
-            </a>
-            <a href="{{ route('notaVentas.index') }}" class="nav-item {{ Request::is('ventas*') ? 'active' : '' }}">
-                <i class="fas fa-cash-register"></i>
-                <span>Ventas</span>
-            </a>
-            <a href="{{ route('reportes.index') }}" class="nav-item {{ Request::is('reportes*') ? 'active' : '' }}">
-                <i class="fas fa-chart-bar"></i>
-                <span>Reportes</span>
-            </a>
-            <a href="{{ route('logout') }}" class="nav-item"
-               onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>Cerrar Sesión</span>
-            </a>
-        </nav>
+
+        <div class="nav-sections">
+            <!-- Módulo 1: Gestión de Usuario -->
+            <div class="nav-module">
+                <div class="module-header">
+                    <i class="fas fa-users-cog"></i>
+                    <h3>Gestión de Usuario</h3>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <nav class="nav-menu">
+                    <a href="{{ route('usuarios.index') }}" class="nav-item">
+                        <i class="fas fa-users"></i>
+                        <span>Usuarios</span>
+                    </a>
+                </nav>
+            </div>
+
+            <!-- Módulo 2: Gestión de Mascotas -->
+            <div class="nav-module">
+                <div class="module-header">
+                    <i class="fas fa-paw"></i>
+                    <h3>Gestión de Mascotas</h3>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <nav class="nav-menu">
+                    <a href="{{ route('mascotas.index') }}" class="nav-item">
+                        <i class="fas fa-paw"></i>
+                        <span>Mascotas</span>
+                    </a>
+                    <a href="{{ route('servicios.index') }}" class="nav-item">
+                        <i class="fas fa-stethoscope"></i>
+                        <span>Servicios</span>
+                    </a>
+                </nav>
+            </div>
+
+            <!-- Módulo 3: Gestión de Inventario -->
+            <div class="nav-module">
+                <div class="module-header">
+                    <i class="fas fa-boxes"></i>
+                    <h3>Gestión de Inventario</h3>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <nav class="nav-menu">
+                    <a href="{{ route('productos.index') }}" class="nav-item">
+                        <i class="fas fa-box"></i>
+                        <span>Productos</span>
+                    </a>
+                    <a href="{{ route('inventarios.index') }}" class="nav-item">
+                        <i class="fas fa-warehouse"></i>
+                        <span>Inventario</span>
+                    </a>
+                    <a href="{{ route('almacenes.index') }}" class="nav-item">
+                        <i class="fas fa-store"></i>
+                        <span>Almacenes</span>
+                    </a>
+                </nav>
+            </div>
+
+            <!-- Módulo 4: Gestión de Ventas -->
+            <div class="nav-module">
+                <div class="module-header">
+                    <i class="fas fa-shopping-cart"></i>
+                    <h3>Gestión de Ventas</h3>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <nav class="nav-menu">
+                    <a href="{{ route('notaVentas.index') }}" class="nav-item">
+                        <i class="fas fa-cash-register"></i>
+                        <span>Ventas</span>
+                    </a>
+                    <a href="{{ route('ordenServicios.index') }}" class="nav-item">
+                        <i class="fas fa-file-medical"></i>
+                        <span>Ordenes de servicios</span>
+                    </a>
+                </nav>
+            </div>
+
+            <!-- Módulo 5: Reportes y Estadísticas -->
+            <div class="nav-module">
+                <div class="module-header">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>Reportes y Estadísticas</h3>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <nav class="nav-menu">
+                    <a href="{{ route('reportes.index') }}" class="nav-item">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Reportes</span>
+                    </a>
+                </nav>
+            </div>
+
+            <!-- Cerrar Sesión at the bottom -->
+            <div class="nav-bottom">
+                <a href="{{ route('logout') }}" class="nav-item logout"
+                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Cerrar Sesión</span>
+                </a>
+            </div>
+        </div>
     </aside>
 
     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
@@ -59,9 +117,20 @@
 
 <style>
     :root {
-        --primary-color: #764ba2;
-        --secondary-color: #667eea;
-        --sidebar-width: 250px;
+        --primary-color: #1a237e;
+        --secondary-color: #283593;
+        --hover-color: #3949ab;
+        --text-color: #ffffff;
+        --text-muted: #b0bec5;
+        --sidebar-width: 280px;
+        --transition-speed: 0.3s;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Segoe UI', 'Arial', sans-serif;
+        background-color: #f5f5f5;
     }
 
     .dashboard {
@@ -71,45 +140,129 @@
 
     .sidebar {
         width: var(--sidebar-width);
-        background: white;
-        box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-        transition: transform 0.3s ease;
-        position: fixed;
+        background: var(--primary-color);
+        color: var(--text-color);
         height: 100vh;
+        position: fixed;
         left: 0;
         top: 0;
+        overflow-y: auto;
+        transition: all var(--transition-speed) ease;
     }
 
     .sidebar-header {
         padding: 1.5rem;
-        background: var(--primary-color);
-        color: white;
-        text-align: center;
+        background: var(--secondary-color);
     }
 
-    .nav-menu {
-        list-style: none;
+    .logo-container {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .logo-container i {
+        font-size: 2rem;
+    }
+
+    .logo-container h2 {
+        margin: 0;
+        font-size: 1.2rem;
+        font-weight: 500;
+    }
+
+    .nav-sections {
         padding: 1rem 0;
     }
 
-    .nav-item {
-        padding: 0.8rem 1.5rem;
+    .module-header {
         display: flex;
         align-items: center;
-        color: #333;
-        text-decoration: none;
-        transition: background 0.3s ease;
+        padding: 0.75rem 1.5rem;
+        cursor: pointer;
+        transition: background-color var(--transition-speed);
     }
 
-    .nav-item:hover, .nav-item.active {
-        background: #f0f2f5;
-        color: var(--primary-color);
+    .module-header:hover {
+        background-color: var(--hover-color);
+    }
+
+    .module-header i {
+        font-size: 1.1rem;
+        margin-right: 0.75rem;
+    }
+
+    .module-header h3 {
+        margin: 0;
+        font-size: 0.9rem;
+        font-weight: 500;
+        flex-grow: 1;
+    }
+
+    .module-header .fa-chevron-down {
+        font-size: 0.8rem;
+        transition: transform var(--transition-speed);
+    }
+
+    .nav-menu {
+        display: none;
+        padding: 0.5rem 0;
+    }
+
+    .nav-item {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem 1.5rem 0.75rem 3rem;
+        color: var(--text-muted);
+        text-decoration: none;
+        transition: all var(--transition-speed);
+    }
+
+    .nav-item:hover {
+        background-color: var(--hover-color);
+        color: var(--text-color);
     }
 
     .nav-item i {
-        margin-right: 10px;
+        font-size: 1rem;
+        margin-right: 1rem;
         width: 20px;
         text-align: center;
+    }
+
+    .nav-item span {
+        font-size: 0.9rem;
+    }
+
+    .nav-bottom {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        padding: 1rem 0;
+        background: var(--secondary-color);
+    }
+
+    .logout {
+        color: #ff5252;
+    }
+
+    .logout:hover {
+        background-color: #ff5252;
+        color: var(--text-color);
+    }
+
+    /* Active states */
+    .nav-module.active .module-header {
+        background-color: var(--hover-color);
+    }
+
+    .nav-module.active .fa-chevron-down {
+        transform: rotate(180deg);
+    }
+
+    .nav-item.active {
+        background-color: var(--hover-color);
+        color: var(--text-color);
     }
 
     @media (max-width: 768px) {
@@ -126,10 +279,41 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Module accordion functionality
+        const moduleHeaders = document.querySelectorAll('.module-header');
+
+        moduleHeaders.forEach(header => {
+            header.addEventListener('click', function() {
+                const module = this.parentElement;
+                const menu = module.querySelector('.nav-menu');
+                const chevron = this.querySelector('.fa-chevron-down');
+
+                // Toggle active state
+                module.classList.toggle('active');
+
+                // Animate menu
+                if (menu.style.display === 'block') {
+                    menu.style.display = 'none';
+                    chevron.style.transform = 'rotate(0deg)';
+                } else {
+                    menu.style.display = 'block';
+                    chevron.style.transform = 'rotate(180deg)';
+                }
+            });
+        });
+
+        // Mark current page as active
         const currentPath = window.location.pathname;
         document.querySelectorAll('.nav-item').forEach(item => {
             if (item.getAttribute('href') === currentPath) {
                 item.classList.add('active');
+                // Expand parent module
+                const parentModule = item.closest('.nav-module');
+                if (parentModule) {
+                    parentModule.classList.add('active');
+                    parentModule.querySelector('.nav-menu').style.display = 'block';
+                    parentModule.querySelector('.fa-chevron-down').style.transform = 'rotate(180deg)';
+                }
             }
         });
     });
