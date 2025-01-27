@@ -25,7 +25,7 @@ class UsuarioController extends Controller
             DB::beginTransaction();
 
             $validated = $request->validate([
-                'nombre' => 'required|string|max:255',
+                'name' => 'required|string|max:255',
                 'email' => 'required|string|email|max:255|unique:usuarios',
 
                 'cedula' => 'required|string|unique:usuarios',
@@ -35,7 +35,7 @@ class UsuarioController extends Controller
             ]);
 
             $usuario = Usuario::create([
-                'name' => $validated['nombre'],
+                'name' => $validated['name'],
                 'email' => $validated['email'],
                 'password' => Hash::make($validated['cedula']),
                 'cedula' => $validated['cedula'],
@@ -78,7 +78,7 @@ class UsuarioController extends Controller
             DB::beginTransaction();
             $usuario = Usuario::find($id);
             $request->validate([
-                'nombre' => 'required|string|max:255',
+                'name' => 'required|string|max:255',
                 'email' => 'required|string|email|max:255|unique:usuarios',
 
                 'cedula' => 'required|string|unique:usuarios',
