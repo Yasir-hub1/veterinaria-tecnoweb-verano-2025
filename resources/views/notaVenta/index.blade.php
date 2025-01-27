@@ -8,7 +8,7 @@
 <div class="notaVenta-container">
     <!-- Header Section -->
     <div class="notaVenta-header">
-        <h1>Gestión de Venta de Ventas</h1>
+        <h1>Gestión de Ventas</h1>
         <button type="button" class="btn-add" onclick="window.ordenServicioController.openModal()">
             <i class="fas fa-plus"></i> Nueva Venta
         </button>
