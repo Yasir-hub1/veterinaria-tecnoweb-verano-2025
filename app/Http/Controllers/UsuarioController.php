@@ -79,9 +79,9 @@ class UsuarioController extends Controller
             $usuario = Usuario::find($id);
             $request->validate([
                 'name' => 'required|string|max:255',
-                'email' => 'required|string|email|max:255|unique:usuarios',
+                'email' => 'required|string|email|max:255',
 
-                'cedula' => 'required|string|unique:usuarios',
+                'cedula' => 'required|string',
                 'celular' => 'required|string',
                 'tipo_id' => 'required|exists:tipos,id',
                 'genero' => 'required'
