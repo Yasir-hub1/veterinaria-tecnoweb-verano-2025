@@ -153,7 +153,7 @@ Route::prefix('almacenes')->group(function () {
 
     Route::prefix('reportes')->group(function () {
         Route::get('/ventas', [ReporteController::class, 'index'])->name('reportes.index');
-        Route::post('/ventas/generar', [ReporteController::class, 'generarReporte'])->name('reportes.generar');
-        Route::get('/ventas/exportar', [ReporteController::class, 'exportar'])->name('reportes.exportar');
+        Route::post('/generar', [ReporteController::class, 'generarReporte'])->name('reportes.generar');
+        Route::get('/exportar', [ReporteController::class, 'exportarExcel'])->name('reportes.exportar');
     });
 });
