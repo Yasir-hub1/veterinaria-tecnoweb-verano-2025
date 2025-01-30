@@ -35,6 +35,10 @@
                         <i class="fas fa-paw"></i>
                         <span>Mascotas</span>
                     </a>
+                    <a href="{{ route('clientes.index') }}" class="nav-item">
+                        <i class="fas fa-users"></i>
+                        <span>Clientes</span>
+                    </a>
                     <a href="{{ route('servicios.index') }}" class="nav-item">
                         <i class="fas fa-stethoscope"></i>
                         <span>Servicios</span>

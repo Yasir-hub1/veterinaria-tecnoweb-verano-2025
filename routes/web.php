@@ -4,6 +4,7 @@ use App\Http\Controllers\AjusteInventarioController;
 use App\Http\Controllers\AlmacenController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CallBackPagoController;
+use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MascotaController;
 use App\Http\Controllers\ProductoController;
@@ -67,6 +68,18 @@ Route::prefix('mascotas')->group(function () {
         Route::get('/{id}', 'show')->where('id', '[0-9]+')->name('mascotas.show');
         Route::put('/{id}', 'update')->where('id', '[0-9]+')->name('mascotas.update');
         Route::delete('/{id}', 'destroy')->where('id', '[0-9]+')->name('mascotas.destroy');
+    });
+});
+
+Route::prefix('clientes')->group(function () {
+    Route::controller(ClienteController::class)->group(function () {
+        Route::get('/', 'index')->name('clientes.index');
+    Route::post('/', 'store')->name('clientes.store');
+    Route::get('/{id}', 'show')->where('id', '[0-9]+')->name('clientes.show');
+    Route::put('/{id}', 'update')->where('id', '[0-9]+')->name('clientes.update');
+    Route::delete('/{id}', 'destroy')->where('id', '[0-9]+')->name('clientes.destroy');
+
+
     });
 });
 

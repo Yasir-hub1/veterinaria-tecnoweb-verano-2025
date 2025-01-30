@@ -10,7 +10,7 @@ class Cliente extends Model
     use HasFactory;
     public $timestamps = false;
     protected $table = "clientes";
-    protected $fillable = ['tipo',"nombre","apellido","razon_social","nit","direccion","celular","email","genero"];
+    protected $fillable = ["id",'tipo',"nombre","apellido","razon_social","nit","direccion","celular","email","genero"];
 
 
     public function mascotas()
