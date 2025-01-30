@@ -17,6 +17,12 @@ use function Laravel\Prompts\table;
 
 class PagoController extends Controller
 {
+
+
+    public function index (){
+        $pagos=Pago::all();
+        return view("pagos.index",compact("pagos"));
+    }
     public function generarCobro(Request $request)
     {
     //    dd($request->all());
@@ -39,7 +45,7 @@ class PagoController extends Controller
             $lnMontoClienteEmpresa = $request->tnMonto;
             $lcCorreo              = $cliente->email;
             $lcUrlCallBack         = route('pagos.callback');
-            $lcUrlReturn           = "http://localhost:8000";
+            $lcUrlReturn           = "http://164.92.67.126";
             $laPedidoDetalle       =  $request->taPedidoDetalle;
             $lcUrl                 = "";
 
@@ -185,7 +191,7 @@ class PagoController extends Controller
             $lnMontoClienteEmpresa = $request->tnMonto;
             $lcCorreo = $cliente->email;
             $lcUrlCallBack = route('pagos.callback');
-            $lcUrlReturn = "http://localhost:8000";
+            $lcUrlReturn = "http://164.92.67.126";
             $laPedidoDetalle = $request->taPedidoDetalle;
             $lcUrl = "";
 

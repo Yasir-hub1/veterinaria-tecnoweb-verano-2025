@@ -81,11 +81,16 @@
                         <i class="fas fa-cash-register"></i>
                         <span>Ventas</span>
                     </a>
+
+                    <a href="{{ route('pagos.index') }}" class="nav-item">
+                        <i class="fas fa-cash-register"></i>
+                        <span>Pagos</span>
+                    </a>
                     <a href="{{ route('ordenServicios.index') }}" class="nav-item">
                         <i class="fas fa-file-medical"></i>
                         <span>Ordenes de servicios</span>
                     </a>
-                    
+
                 </nav>
             </div>
 
