@@ -881,4 +881,26 @@
         font-size: 0.875rem;
         font-weight: 500;
     }
+    .roles-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.role-tag {
+    background-color: #eef2ff;
+    color: var(--primary-color);
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-full);
+    font-size: 0.875rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.role-permisos-count {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
 </style>
