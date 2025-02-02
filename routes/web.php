@@ -18,7 +18,8 @@ use App\Http\Controllers\VentaController;
 use App\Http\Controllers\ReporteController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UsuarioController;
-
+use App\Http\Controllers\UsuarioRolPermisoController;
+use App\Models\UsuarioRolPermiso;
 
 // Redirect root to login
 Route::get('/', function () {
@@ -53,13 +54,17 @@ Route::middleware(['auth'])->group(function () {
     // Roles Routes
     Route::prefix('roles')->group(function () {
         Route::controller(RoleController::class)->group(function () {
-            Route::get('/', 'index')->middleware('permiso:ver_roles');
-            Route::post('/', 'store')->middleware('permiso:crear_roles');
-            Route::get('/{role}', 'show')->middleware('permiso:ver_roles');
-            Route::put('/{role}', 'update')->middleware('permiso:editar_roles');
-            Route::delete('/{role}', 'destroy')->middleware('permiso:eliminar_roles');
+            Route::get('/', 'index')->name('roles.index');
+            Route::post('/', 'store')->name('roles.store');
+            Route::get('/{role}', 'show')->name('roles.show');
+            Route::put('/{role}', 'update')->name('roles.update');
+            Route::delete('/{role}', 'destroy')->name('roles.destroy');
         });
     });
+
+    Route::get('/asignacion-roles', [UsuarioRolPermisoController::class, 'index'])->name('asignacion-roles.index');
+    Route::get('/asignacion-roles/{id}', [UsuarioRolPermisoController::class, 'show']);
+    Route::put('/asignacion-roles/{id}', [UsuarioRolPermisoController::class, 'update']);
 
 Route::prefix('mascotas')->group(function () {
     Route::controller(MascotaController::class)->group(function () {

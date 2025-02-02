@@ -20,6 +20,14 @@
                         <i class="fas fa-users"></i>
                         <span>Usuarios</span>
                     </a>
+                    <a href="{{ route('roles.index') }}" class="nav-item">
+                        <i class="fas fa-users"></i>
+                        <span>Roles y Permisos</span>
+                    </a>
+                    <a href="{{ route('asignacion-roles.index') }}" class="nav-item">
+                        <i class="fas fa-users"></i>
+                        <span>Asignacion de roles</span>
+                    </a>
                 </nav>
             </div>
 

@@ -16,9 +16,9 @@ class Permiso extends Model
         return $this->belongsToMany(Role::class, 'roles_permisos', 'permiso_id', 'role_id');
     }
 
-public function usuarios()
-{
-    return $this->belongsToMany(Usuario::class, 'role_permiso')
-                ->withPivot('role_id');
-}
+    public function usuarios()
+    {
+        return $this->belongsToMany(Usuario::class, 'usuario_rol_permiso', 'permiso_id', 'usuario_id')
+                    ->withPivot('rol_id');
+    }
 }

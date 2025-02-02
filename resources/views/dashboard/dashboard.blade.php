@@ -175,6 +175,10 @@
                             <i class="fas fa-users"></i>
                             <span>Usuarios</span>
                         </a>
+                        <a href="{{ route('roles.index') }}" class="nav-item">
+                            <i class="fas fa-users"></i>
+                            <span>Roles y Permisos</span>
+                        </a>
                     </nav>
                 </div>
 
