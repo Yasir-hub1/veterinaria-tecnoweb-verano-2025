@@ -153,6 +153,14 @@
     </style>
 </head>
 <body>
+    @php
+function userHasAnyPermission($permissions) {
+    return auth()->user()->roles()
+        ->whereHas('permisos', function($query) use ($permissions) {
+            $query->whereIn('nombre', (array) $permissions);
+        })->exists();
+}
+@endphp
     <div class="dashboard">
         <aside class="sidebar">
             <div class="sidebar-header">
@@ -164,7 +172,7 @@
 
             <div class="nav-sections">
                 <!-- Módulo 1: Gestión de Usuario -->
-                @if(auth()->user()->hasAnyPermission(['guardar_usuario', 'editar_usuario', 'eliminar_usuario', 'guardar_rol', 'editar_rol', 'eliminar_rol']))
+                @if(userHasAnyPermission(['guardar_usuario', 'editar_usuario', 'eliminar_usuario', 'guardar_rol', 'editar_rol', 'eliminar_rol']))
                 <div class="nav-module">
                     <div class="module-header">
                         <i class="fas fa-users-cog"></i>
@@ -172,14 +180,14 @@
                         <i class="fas fa-chevron-down"></i>
                     </div>
                     <nav class="nav-menu">
-                        @if(auth()->user()->hasAnyPermission(['guardar_usuario', 'editar_usuario', 'eliminar_usuario']))
+                        @if(userHasAnyPermission(['guardar_usuario', 'editar_usuario', 'eliminar_usuario']))
                         <a href="{{ route('usuarios.index') }}" class="nav-item">
                             <i class="fas fa-users"></i>
                             <span>Usuarios</span>
                         </a>
                         @endif
 
-                        @if(auth()->user()->hasAnyPermission(['guardar_rol', 'editar_rol', 'eliminar_rol']))
+                        @if(userHasAnyPermission(['guardar_rol', 'editar_rol', 'eliminar_rol']))
                         <a href="{{ route('roles.index') }}" class="nav-item">
                             <i class="fas fa-users"></i>
                             <span>Roles y Permisos</span>
@@ -194,7 +202,7 @@
                 @endif
 
                 <!-- Módulo 2: Gestión de Mascotas -->
-                @if(auth()->user()->hasAnyPermission(['guardar_mascota', 'editar_mascota', 'eliminar_mascota']))
+                @if(userHasAnyPermission(['guardar_mascota', 'editar_mascota', 'eliminar_mascota']))
                 <div class="nav-module">
                     <div class="module-header">
                         <i class="fas fa-paw"></i>
@@ -219,7 +227,7 @@
                 @endif
 
                 <!-- Módulo 3: Gestión de Inventario -->
-                @if(auth()->user()->hasAnyPermission(['guardar_inventario', 'editar_inventario', 'eliminar_inventario']))
+                @if(userHasAnyPermission(['guardar_inventario', 'editar_inventario', 'eliminar_inventario']))
                 <div class="nav-module">
                     <div class="module-header">
                         <i class="fas fa-boxes"></i>
@@ -248,7 +256,7 @@
                 @endif
 
                 <!-- Módulo 4: Gestión de Ventas -->
-                @if(auth()->user()->hasAnyPermission(['guardar_venta', 'editar_venta', 'eliminar_venta']))
+                @if(userHasAnyPermission(['guardar_venta', 'editar_venta', 'eliminar_venta']))
                 <div class="nav-module">
                     <div class="module-header">
                         <i class="fas fa-shopping-cart"></i>
@@ -273,7 +281,7 @@
                 @endif
 
                 <!-- Módulo 5: Reportes y Estadísticas -->
-                @if(auth()->user()->hasPermission('ver_reporte'))
+                @if(userHasAnyPermission('ver_reporte'))
                 <div class="nav-module">
                     <div class="module-header">
                         <i class="fas fa-chart-line"></i>
