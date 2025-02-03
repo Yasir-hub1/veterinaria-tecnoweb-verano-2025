@@ -20,7 +20,7 @@ class Role extends Model
 
     // public function usuarios()
     // {
-    //     return $this->belongsToMany(Usuario::class, 'usuario_rol_permiso', 'rol_id', 'usuario_id')
+    //     return $this->belongsToMany(User::class, 'usuario_rol_permiso', 'rol_id', 'usuario_id')
     //                 ->withPivot('permiso_id');
     // }
 
@@ -39,7 +39,7 @@ class Role extends Model
 
     public function usuarios()
     {
-        return $this->belongsToMany(Usuario::class, 'usuario_rol_permiso', 'rol_id', 'usuario_id')
+        return $this->belongsToMany(User::class, 'usuario_rol_permiso', 'rol_id', 'usuario_id')
                     ->withPivot('permiso_id');
     }
 }

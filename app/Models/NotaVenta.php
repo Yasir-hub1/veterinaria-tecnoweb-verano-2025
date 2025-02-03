@@ -19,7 +19,7 @@ class NotaVenta extends Model
 
     public function usuario()
     {
-        return $this->belongsTo(Usuario::class);
+        return $this->belongsTo(User::class);
     }
 
     // Relación: una venta tiene muchos productos a través de detalles de ventas

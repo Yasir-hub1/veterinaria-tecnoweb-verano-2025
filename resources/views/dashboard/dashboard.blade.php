@@ -165,7 +165,7 @@
             {{ auth()->user()->testTraitLoaded() ? 'Trait loaded' : 'Trait not loaded' }}
         @endif
             <div class="nav-sections">
-                <!-- Módulo 1: Gestión de Usuario -->
+                <!-- Módulo 1: Gestión de User -->
                 @if(auth()->user()->hasAnyPermission(['guardar_usuario', 'editar_usuario', 'eliminar_usuario', 'guardar_rol', 'editar_rol', 'eliminar_rol']))
                 <div class="nav-module">
                     <div class="module-header">

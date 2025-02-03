@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Cliente;
 use App\Models\NotaVenta;
-use App\Models\Usuario;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -21,7 +21,7 @@ class ReporteController extends Controller
             ->orderBy('nombre')
             ->get();
 
-        $usuarios = Usuario::select('id', 'name')
+        $usuarios = User::select('id', 'name')
             ->orderBy('name')
             ->get();
 
@@ -119,7 +119,7 @@ class ReporteController extends Controller
             $sheet->setCellValue('A1', 'ID');
             $sheet->setCellValue('B1', 'Fecha');
             $sheet->setCellValue('C1', 'Cliente');
-            $sheet->setCellValue('D1', 'Usuario');
+            $sheet->setCellValue('D1', 'User');
             $sheet->setCellValue('E1', 'Tipo de Pago');
             $sheet->setCellValue('F1', 'Total');
             $sheet->setCellValue('G1', 'Estado');

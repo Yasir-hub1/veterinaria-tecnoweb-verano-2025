@@ -11,7 +11,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
 use Laravel\Sanctum\HasApiTokens;
 
-class Usuario extends Authenticatable
+class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable,HasRolesAndPermissions;
 
@@ -103,7 +103,7 @@ class Usuario extends Authenticatable
         return $this->hasMany(AjusteInventario::class, 'usuario_id');
     }
 
-    // En el modelo Usuario
+    // En el modelo User
     public function sincronizarRolesYPermisos($roles)
     {
         DB::table('usuario_rol_permiso')->where('usuario_id', $this->id)->delete();

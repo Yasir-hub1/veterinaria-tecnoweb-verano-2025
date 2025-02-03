@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Permiso;
 use App\Models\Role;
 use App\Models\Tipo;
-use App\Models\Usuario;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -14,7 +14,7 @@ class UsuarioController extends Controller
 {
     public function index()
     {
-        $usuarios = Usuario::with(['roles', 'tipo'])->get();
+        $usuarios = User::with(['roles', 'tipo'])->get();
         $tipos = Tipo::all();
         return view('usuario.index', compact('usuarios', 'tipos'));
     }
@@ -34,7 +34,7 @@ class UsuarioController extends Controller
                 'genero' => 'required'
             ]);
 
-            $usuario = Usuario::create([
+            $usuario = User::create([
                 'name' => $validated['name'],
                 'email' => $validated['email'],
                 'password' => Hash::make($validated['cedula']),
@@ -52,7 +52,7 @@ class UsuarioController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Usuario creado exitosamente',
+                'message' => 'User creado exitosamente',
                 'user' => $usuario
             ]);
 
@@ -68,7 +68,7 @@ class UsuarioController extends Controller
 
     public function show($id)
     {
-        $usuario = Usuario::findOrFail($id);
+        $usuario = User::findOrFail($id);
         return response()->json($usuario);
     }
 
@@ -76,7 +76,7 @@ class UsuarioController extends Controller
     {
         try {
             DB::beginTransaction();
-            $usuario = Usuario::find($id);
+            $usuario = User::find($id);
             $request->validate([
                 'name' => 'required|string|max:255',
                 'email' => 'required|string|email|max:255',
@@ -98,7 +98,7 @@ class UsuarioController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Usuario actualizado exitosamente',
+                'message' => 'User actualizado exitosamente',
 
             ]);
 
@@ -116,7 +116,7 @@ class UsuarioController extends Controller
     {
         try {
 
-             $usuario=Usuario::find($id);
+             $usuario=User::find($id);
             // En lugar de eliminar, desactivamos el usuario
             $usuario->update(['estado' => 2]);
 
@@ -124,7 +124,7 @@ class UsuarioController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Usuario desactivado exitosamente'
+                'message' => 'User desactivado exitosamente'
             ]);
 
         } catch (\Exception $e) {
@@ -137,7 +137,7 @@ class UsuarioController extends Controller
         }
     }
 
-    public function toggleStatus(Usuario $usuario)
+    public function toggleStatus(User $usuario)
     {
         try {
             $usuario->update(['estado' => !$usuario->estado]);

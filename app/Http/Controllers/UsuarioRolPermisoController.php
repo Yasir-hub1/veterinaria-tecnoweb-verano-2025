@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Role;
-use App\Models\Usuario;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -11,7 +11,7 @@ class UsuarioRolPermisoController extends Controller
 {
     public function index()
     {
-        $usuarios = Usuario::with(['roles' => function($query) {
+        $usuarios = User::with(['roles' => function($query) {
             $query->distinct();
         }])->get();
         $roles = Role::with('permisos')->get();
@@ -20,7 +20,7 @@ class UsuarioRolPermisoController extends Controller
 
     public function show($id)
     {
-        $usuario = Usuario::with('roles')->findOrFail($id);
+        $usuario = User::with('roles')->findOrFail($id);
         return response()->json($usuario);
     }
     public function update(Request $request, $id)
@@ -31,7 +31,7 @@ class UsuarioRolPermisoController extends Controller
             // \Log::info('Request data:', $request->all());
             // \Log::info('User ID:', ['id' => $id]);
 
-            $usuario = Usuario::findOrFail($id);
+            $usuario = User::findOrFail($id);
 
             // Log the roles being synced
             // \Log::info('Roles to sync:', ['roles' => $request->input('roles')]);

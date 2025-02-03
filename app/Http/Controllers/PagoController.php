@@ -8,7 +8,7 @@ use App\Models\Mascota;
 use App\Models\NotaVenta;
 use App\Models\OrdenServicio;
 use App\Models\Pago;
-use App\Models\Usuario;
+use App\Models\User;
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\DB;

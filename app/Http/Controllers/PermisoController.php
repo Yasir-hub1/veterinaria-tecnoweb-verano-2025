@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Usuario;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class PermisoController extends Controller
 {
-    public function edit(Usuario $usuario)
+    public function edit(User $usuario)
     {
         $modulos = $this->getModulosConPermisos();
         return view('users.permissions', compact('usuario', 'modulos'));
     }
 
-    public function update(Request $request, Usuario $usuario)
+    public function update(Request $request, User $usuario)
     {
         try {
             DB::beginTransaction();

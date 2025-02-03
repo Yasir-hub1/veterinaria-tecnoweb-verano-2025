@@ -28,7 +28,7 @@ class VerificarPermiso
     //     // Verificar que el usuario esté autenticado
     //     if (!$request->user()) {
     //         return response()->json([
-    //             'message' => 'Usuario no autenticado',
+    //             'message' => 'User no autenticado',
     //             'error' => 'Unauthorized'
     //         ], 401);
     //     }
