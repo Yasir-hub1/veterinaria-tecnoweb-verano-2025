@@ -8,7 +8,7 @@ trait HasRolesAndPermissions
     {
         return $this->roles()
             ->whereHas('permisos', function($query) use ($permission) {
-                $query->where('nombre', $permission);
+                $query->where('permisos.nombre', $permission);
             })->exists();
     }
 
@@ -16,7 +16,7 @@ trait HasRolesAndPermissions
     {
         return $this->roles()
             ->whereHas('permisos', function($query) use ($permissions) {
-                $query->whereIn('nombre', (array) $permissions);
+                $query->whereIn('permisos.nombre', (array) $permissions);
             })->exists();
     }
 
