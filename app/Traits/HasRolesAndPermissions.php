@@ -33,14 +33,4 @@ trait HasRolesAndPermissions
             ->whereIn('permisos.nombre', (array) $permissions)
             ->exists();
     }
-
-    public function hasRole($role)
-    {
-        return $this->roles->contains('nombre', $role);
-    }
-
-    public function hasAnyRole($roles)
-    {
-        return $this->roles()->whereIn('nombre', (array) $roles)->exists();
-    }
 }

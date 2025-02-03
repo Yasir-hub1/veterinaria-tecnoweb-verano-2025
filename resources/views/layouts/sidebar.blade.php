@@ -1,5 +1,7 @@
 
-
+@if(auth()->check() && method_exists(auth()->user(), 'testTraitLoaded'))
+    {{ auth()->user()->testTraitLoaded() ? 'Trait loaded' : 'Trait not loaded' }}
+@endif
 <div class="dashboard">
     <aside class="sidebar">
         <div class="sidebar-header">

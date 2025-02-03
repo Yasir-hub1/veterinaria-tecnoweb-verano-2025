@@ -161,7 +161,9 @@
                     <h2>Sistema Veterinaria</h2>
                 </div>
             </div>
-
+            @if(auth()->check() && method_exists(auth()->user(), 'testTraitLoaded'))
+            {{ auth()->user()->testTraitLoaded() ? 'Trait loaded' : 'Trait not loaded' }}
+        @endif
             <div class="nav-sections">
                 <!-- Módulo 1: Gestión de Usuario -->
                 @if(auth()->user()->hasAnyPermission(['guardar_usuario', 'editar_usuario', 'eliminar_usuario', 'guardar_rol', 'editar_rol', 'eliminar_rol']))
