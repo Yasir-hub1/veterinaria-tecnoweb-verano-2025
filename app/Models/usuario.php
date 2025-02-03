@@ -100,44 +100,70 @@ class Usuario extends Authenticatable
     }
 
     // En el modelo Usuario
-public function sincronizarRolesYPermisos($roles)
-{
-    // Eliminar asignaciones existentes
-    $this->rolesPermisos()->delete();
+    public function sincronizarRolesYPermisos($roles)
+    {
+        DB::table('usuario_rol_permiso')->where('usuario_id', $this->id)->delete();
 
-    // Crear nuevas asignaciones
-    foreach ($roles as $rolId) {
-        $permisosRol = DB::table('roles_permisos')
-                        ->where('role_id', $rolId)
-                        ->get();
+        foreach ($roles as $rolId) {
+            $permisosRol = DB::table('roles_permisos')
+                            ->where('role_id', $rolId)
+                            ->get();
 
-        $asignaciones = $permisosRol->map(function($permisoRol) use ($rolId) {
-            return [
-                'usuario_id' => $this->id,
-                'rol_id' => $rolId,
-                'permiso_id' => $permisoRol->permiso_id
-            ];
-        })->toArray();
-
-        DB::table('usuario_rol_permiso')->insert($asignaciones);
+            foreach ($permisosRol as $permisoRol) {
+                DB::table('usuario_rol_permiso')->insert([
+                    'usuario_id' => $this->id,
+                    'rol_id' => $rolId,
+                    'permiso_id' => $permisoRol->permiso_id
+                ]);
+            }
+        }
     }
-}
+
+// public function hasPermission($permission)
+// {
+//     return $this->roles()
+//         ->whereHas('permisos', function($query) use ($permission) {
+//             $query->where('nombre', $permission);
+//         })->exists();
+// }
 
 public function hasPermission($permission)
-{
-    return $this->roles()
-        ->whereHas('permisos', function($query) use ($permission) {
-            $query->where('nombre', $permission);
-        })->exists();
-}
+    {
+        return DB::table('usuarios')
+            ->join('usuario_rol_permiso', 'usuarios.id', '=', 'usuario_rol_permiso.usuario_id')
+            ->join('roles_permisos', function($join) {
+                $join->on('usuario_rol_permiso.rol_id', '=', 'roles_permisos.role_id')
+                     ->on('usuario_rol_permiso.permiso_id', '=', 'roles_permisos.permiso_id');
+            })
+            ->join('permisos', 'roles_permisos.permiso_id', '=', 'permisos.id')
+            ->where('usuarios.id', $this->id)
+            ->where('permisos.nombre', $permission)
+            ->exists();
+    }
+
+
+// public function hasAnyPermission($permissions)
+// {
+//     return $this->roles()
+//         ->whereHas('permisos', function($query) use ($permissions) {
+//             $query->whereIn('nombre', (array) $permissions);
+//         })->exists();
+// }
 
 public function hasAnyPermission($permissions)
 {
-    return $this->roles()
-        ->whereHas('permisos', function($query) use ($permissions) {
-            $query->whereIn('nombre', (array) $permissions);
-        })->exists();
+    return DB::table('usuarios')
+        ->join('usuario_rol_permiso', 'usuarios.id', '=', 'usuario_rol_permiso.usuario_id')
+        ->join('roles_permisos', function($join) {
+            $join->on('usuario_rol_permiso.rol_id', '=', 'roles_permisos.role_id')
+                 ->on('usuario_rol_permiso.permiso_id', '=', 'roles_permisos.permiso_id');
+        })
+        ->join('permisos', 'roles_permisos.permiso_id', '=', 'permisos.id')
+        ->where('usuarios.id', $this->id)
+        ->whereIn('permisos.nombre', (array) $permissions)
+        ->exists();
 }
+
 
 public function hasRole($role)
 {
