@@ -80,15 +80,8 @@ class Usuario extends Authenticatable
         return $this->belongsTo(Tipo::class);
     }
 
-    public function hasRole($roleName)
-    {
-        return $this->roles->contains('nombre', $roleName);
-    }
 
-    public function hasPermission($permissionName)
-    {
-        return $this->roles->flatMap->permisos->contains('nombre', $permissionName);
-    }
+
 
     public function ordenes()
     {
@@ -126,5 +119,31 @@ public function sincronizarRolesYPermisos($roles)
 
         DB::table('usuario_rol_permiso')->insert($asignaciones);
     }
+}
+
+public function hasPermission($permission)
+{
+    return $this->roles()
+        ->whereHas('permisos', function($query) use ($permission) {
+            $query->where('nombre', $permission);
+        })->exists();
+}
+
+public function hasAnyPermission($permissions)
+{
+    return $this->roles()
+        ->whereHas('permisos', function($query) use ($permissions) {
+            $query->whereIn('nombre', (array) $permissions);
+        })->exists();
+}
+
+public function hasRole($role)
+{
+    return $this->roles->contains('nombre', $role);
+}
+
+public function hasAnyRole($roles)
+{
+    return $this->roles()->whereIn('nombre', (array) $roles)->exists();
 }
 }

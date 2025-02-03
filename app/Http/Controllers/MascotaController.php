@@ -12,8 +12,15 @@ class MascotaController extends Controller
     /**
      * Display a listing of the resource.
      */
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     public function index()
     {
+        if (!auth()->user()->hasAnyPermission(['guardar_mascota', 'editar_mascota', 'eliminar_mascota'])) {
+            abort(403, 'No tiene permiso para acceder a esta sección');
+        }
         $mascotas = Mascota::with('cliente')->get();
         $clientes = Cliente::all();
         return view('mascotas.index', compact('mascotas', 'clientes'));

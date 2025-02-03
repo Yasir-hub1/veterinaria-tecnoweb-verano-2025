@@ -7,9 +7,12 @@
     <div class="servicio-container">
         <div class="servicio-header">
             <h1>Gestión de Roles y Permisos</h1>
+            @if(auth()->user()->hasPermission('guardar_rol'))
+
             <button type="button" class="btn-add" onclick="roleController.openModal()">
                 <i class="fas fa-plus"></i> Nuevo Rol
             </button>
+            @endif
         </div>
 
         <div class="servicio-card">
@@ -19,7 +22,9 @@
                         <tr>
                             <th>Nombre del Rol</th>
                             <th>Permisos Asignados</th>
+                            @if(auth()->user()->hasAnyPermission(['editar_rol', 'eliminar_rol']))
                             <th>Acciones</th>
+                        @endif
                         </tr>
                     </thead>
                     <tbody>
@@ -35,15 +40,20 @@
                                 </td>
                                 <td>
                                     <div class="action-buttons">
+                                        @if(auth()->user()->hasAnyPermission(['editar_rol', 'eliminar_rol']))
                                         <button class="btn-edit" onclick="roleController.openModal({{ $rol->id }})">
                                             <i class="fas fa-edit"></i>
                                         </button>
+                                    @endif
+                                    @if(auth()->user()->hasPermission('eliminar_rol'))
                                         <button type="button" class="btn-delete"
                                             onclick="roleController.delete({{ $rol->id }})">
                                             <i class="fas fa-trash"></i>
                                         </button>
+
                                     </div>
                                 </td>
+                                    @endif
                             </tr>
                         @empty
                             <tr>

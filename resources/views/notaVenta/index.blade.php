@@ -9,9 +9,12 @@
     <!-- Header Section -->
     <div class="notaVenta-header">
         <h1>Gestión de Ventas</h1>
+        @if(auth()->user()->hasPermission('guardar_venta'))
+
         <button type="button" class="btn-add" onclick="window.ordenServicioController.openModal()">
             <i class="fas fa-plus"></i> Nueva Venta
         </button>
+        @endif
     </div>
 
     <!-- Table Section -->
@@ -25,7 +28,9 @@
                         <th>fecha</th>
                         <th>tipo de pago</th>
                         <th>estado</th>
-                        <th>Acciones</th>
+                        @if(auth()->user()->hasAnyPermission(['editar_venta', 'eliminar_venta']))
+                            <th>Acciones</th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody>
@@ -38,8 +43,12 @@
                             <td style="color: {{ $notaVenta->estado == 1 ? 'green' : ($notaVenta->estado == 2 ? 'red' : 'black') }}">
                                 {{ $notaVenta->estado == 1 ? 'Activo' : ($notaVenta->estado == 2 ? 'Anulado' : 'Error') }}
                             </td>
+                            @if(auth()->user()->hasAnyPermission(['editar_venta', 'eliminar_venta']))
+
                             <td>
                                 <div class="action-buttons">
+                                    @if(auth()->user()->hasPermission('editar_venta'))
+
                                     @if ($notaVenta->estado == 1)
                                         <button type="button"
                                             class="btn-delete"
@@ -48,8 +57,10 @@
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     @endif
+                                    @endif
                                 </div>
                             </td>
+                            @endif
                         </tr>
                     @empty
                         <tr>
@@ -57,11 +68,13 @@
                                 <div class="empty-state">
                                     <i class="fas fa-paw"></i>
                                     <p>No hay notaVentas registradas</p>
+                                    @if(auth()->user()->hasPermission('guardar_venta'))
                                     <button type="button"
                                             class="btn-add"
                                             onclick="window.ordenServicioController.openModal()">
                                         Agregar Primera Venta de Producto
                                     </button>
+                                    @endif
                                 </div>
                             </td>
                         </tr>

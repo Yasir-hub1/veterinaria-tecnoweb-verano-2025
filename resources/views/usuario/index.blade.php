@@ -8,9 +8,11 @@
         <!-- Header Section -->
         <div class="usuario-header">
             <h1>Gestión de Usuarios</h1>
+            @if(auth()->user()->hasPermission('guardar_usuario'))
             <button type="button" class="btn-add" onclick="mascotaController.openModal()">
                 <i class="fas fa-plus"></i> Nuevo Usuario
             </button>
+            @endif
         </div>
 
         <!-- Table Section -->
@@ -26,7 +28,9 @@
                             <th>Celular</th>
                             <th>Correo</th>
                             <th>Estado</th>
+                            @if(auth()->user()->hasAnyPermission(['editar_usuario', 'eliminar_usuario']))
                             <th>Acciones</th>
+                        @endif
                         </tr>
                     </thead>
                     <tbody>
@@ -42,18 +46,25 @@
                                 <td>
                                     {{ $usuario->estado == '1' ? 'Activo' :'Inactivo' }}
                                 </td>
+                                @if(auth()->user()->hasAnyPermission(['editar_usuario', 'eliminar_usuario']))
                                 <td>
                                     <div class="action-buttons">
+                                        @if(auth()->user()->hasPermission('editar_usuario'))
                                         <button class="btn-edit" onclick="mascotaController.openModal({{ $usuario->id }})">
                                             <i class="fas fa-edit"></i>
                                         </button>
+                                        @endif
+
+                                        @if(auth()->user()->hasPermission('eliminar_usuario'))
                                         <button type="button" class="btn-delete"
                                             onclick="mascotaController.delete({{ $usuario->id }})"
                                             title="Eliminar usuario">
                                             <i class="fas fa-trash"></i>
                                         </button>
+                                        @endif
                                     </div>
                                 </td>
+                                @endif
                             </tr>
                         @empty
                             <tr>

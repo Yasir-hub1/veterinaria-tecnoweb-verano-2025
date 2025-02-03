@@ -8,9 +8,12 @@
     <!-- Header Section -->
     <div class="servicio-header">
         <h1>Gestión de Servicios</h1>
+        @if(auth()->user()->hasPermission('guardar_servicio'))
+
         <button type="button" class="btn-add" onclick="mascotaController.openModal()">
             <i class="fas fa-plus"></i> Nuevo Servicio
         </button>
+        @endif
     </div>
 
     <!-- Table Section -->
@@ -24,7 +27,9 @@
                         <th>Precio</th>
                         <th>descripcion</th>
 
+                        @if(auth()->user()->hasAnyPermission(['editar_servicio', 'eliminar_servicio']))
                         <th>Acciones</th>
+                    @endif
                     </tr>
                 </thead>
                 <tbody>
@@ -35,20 +40,26 @@
 
                             <td>{{ $servicio->precio }}</td>
                             <td>{{ $servicio->descripcion }}</td>
+                            @if(auth()->user()->hasAnyPermission(['editar_servicio', 'eliminar_servicio']))
 
                             <td>
                                 <div class="action-buttons">
+                                    @if(auth()->user()->hasPermission('editar_servicio'))
                                     <button class="btn-edit" onclick="mascotaController.openModal({{ $servicio->id }})">
                                         <i class="fas fa-edit"></i>
                                     </button>
+                                @endif
+                                    @if(auth()->user()->hasPermission('eliminar_servicio'))
                                     <button type="button"
                                             class="btn-delete"
                                             onclick="mascotaController.delete({{ $servicio->id }})"
                                             title="Eliminar servicio">
                                         <i class="fas fa-trash"></i>
                                     </button>
+                                     @endif
                                 </div>
                             </td>
+                            @endif
                         </tr>
                     @empty
                         <tr>
@@ -56,11 +67,14 @@
                                 <div class="empty-state">
                                     <i class="fas fa-paw"></i>
                                     <p>No hay servicios registradas</p>
+                                    @if(auth()->user()->hasPermission('guardar_servicio'))
+
                                     <button type="button"
                                             class="btn-add"
                                             onclick="mascotaController.openModal()">
                                         Agregar Primera Servicio
                                     </button>
+                                    @endif
                                 </div>
                             </td>
                         </tr>

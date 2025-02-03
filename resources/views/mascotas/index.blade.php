@@ -8,9 +8,11 @@
     <!-- Header Section -->
     <div class="mascota-header">
         <h1>Gestión de Mascotas</h1>
+        @if(auth()->user()->hasPermission('guardar_mascota'))
         <button type="button" class="btn-add" onclick="mascotaController.openModal()">
             <i class="fas fa-plus"></i> Nueva Mascota
         </button>
+        @endif
     </div>
 
     <!-- Table Section -->
@@ -25,7 +27,9 @@
                         <th>Tipo</th>
                         <th>Raza</th>
                         <th>Edad</th>
-                        <th>Acciones</th>
+                        @if(auth()->user()->hasAnyPermission(['editar_mascota', 'eliminar_mascota']))
+                            <th>Acciones</th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody>
@@ -43,19 +47,25 @@
                             <td>{{ $mascota->tipo }}</td>
                             <td>{{ $mascota->raza }}</td>
                             <td>{{ $mascota->edad }} años</td>
+                            @if(auth()->user()->hasAnyPermission(['editar_mascota', 'eliminar_mascota']))
                             <td>
                                 <div class="action-buttons">
-                                    <button class="btn-edit" onclick="mascotaController.openModal({{ $mascota->id }})">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button type="button"
-                                            class="btn-delete"
-                                            onclick="mascotaController.delete({{ $mascota->id }})"
-                                            title="Eliminar mascota">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
+                                    @if(auth()->user()->hasPermission('editar_mascota'))
+                                        <button class="btn-edit" onclick="mascotaController.openModal({{ $mascota->id }})">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                    @endif
+
+                                    @if(auth()->user()->hasPermission('eliminar_mascota'))
+                                        <button type="button" class="btn-delete"
+                                                onclick="mascotaController.delete({{ $mascota->id }})"
+                                                title="Eliminar mascota">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    @endif
                                 </div>
                             </td>
+                        @endif
                         </tr>
                     @empty
                         <tr>

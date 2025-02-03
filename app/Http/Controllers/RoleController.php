@@ -19,24 +19,56 @@ class RoleController extends Controller
         'Gestión de Usuarios' => [
             'guardar_usuario',
             'editar_usuario',
-            'eliminar_usuario'
+            'eliminar_usuario',
+
+            'guardar_rol',
+            'editar_rol',
+            'eliminar_rol',
+
         ],
         'Gestión de Mascotas' => [
             'guardar_mascota',
             'editar_mascota',
-            'eliminar_mascota'
+            'eliminar_mascota',
+
+            'guardar_cliente',
+            'editar_cliente',
+            'eliminar_cliente',
+
+
+            'guardar_servicio',
+            'editar_servicio',
+            'eliminar_servicio',
+
+
         ],
         'Gestión de Inventario' => [
 
             'guardar_inventario',
             'editar_inventario',
-            'eliminar_inventario'
+            'eliminar_inventario',
+
+            'guardar_producto',
+            'editar_producto',
+            'eliminar_producto',
+
+            'guardar_almacen',
+            'editar_almacen',
+            'eliminar_almacen',
         ],
+
         'Gestión de Ventas' => [
             // aquí los permisos de ventas
             'guardar_venta',
             'editar_venta',
-            'eliminar_venta'
+            'eliminar_venta',
+
+            'ver_pago',
+
+
+            'guardar_orden_servicio',
+            'editar_orden_servicio',
+            'eliminar_orden_servicio'
         ],
         'Gestión de Reportes y estadisticas' => [
             // aquí los permisos de reportes
