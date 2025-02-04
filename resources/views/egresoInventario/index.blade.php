@@ -1,16 +1,16 @@
-{{-- resources/views/egresoInventarios/index.blade.php --}}
+{{-- resources/views/ajusteInventarios/index.blade.php --}}
 @extends('layouts.app')
 
-@section('title', 'Gestión de ingresos | Sistema Veterinario')
+@section('title', 'Gestión de Ajuste de inventario | Sistema Veterinario')
 
 @section('content')
     <div class="egreso-container">
         <!-- Header Section -->
         <div class="egreso-header">
-            <h1>Egreso de Inventarios</h1>
+            <h1>Ajuste de Inventarios</h1>
 
             <button type="button" class="btn-add" onclick="egresoController.openModal()">
-                <i class="fas fa-plus"></i> Nuevo Egreso
+                <i class="fas fa-plus"></i> Nuevo
             </button>
         </div>
 
@@ -23,10 +23,10 @@
                             <th>#</th>
                             <th>Usuario</th>
                             <th>Producto</th>
-                            <th>Cantidad de egreso</th>
-                            <th>Tipo de Egreso</th>
+                            <th>Cantidad</th>
+                            <th>Almacen</th>
+                            <th>Tipo</th>
                             <th>Glosa</th>
-
                             <th>fecha</th>
 
 
@@ -35,55 +35,27 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($egresos as $egreso)
-                            <tr>
-                                <td>{{ $egreso->id }}</td>
-                                <td>{{ $egreso->usuario->name }}</td>
+                        @foreach($ajustes as $ajuste)
+                            @foreach($ajuste->detalles as $detalle)
+                                <tr>
+                                    <td>{{ $ajuste->id }}</td> <!-- Fecha del ajuste -->
+                                    <td>{{ $ajuste->usuario->name ?? 'N/A' }}</td> <!-- Nombre del usuario -->
+                                    <td>{{ $detalle->productoAlmacen->producto->nombre ?? 'N/A' }}</td> <!-- Nombre del producto -->
+                                  @if ($ajuste->tipo == '1')
+                                  <td> - {{ $detalle->cantidad }}</td> <!-- Cantidad ajustada -->
 
-                                @foreach($egreso->detalles as $detalle)
+                                  @else
+                                  <td> + {{ $detalle->cantidad }}</td> <!-- Cantidad ajustada -->
 
-                                    <!-- Here's how you access the product name -->
-                                    <td> {{ $detalle->productoAlmacen->producto->nombre }}</td>
-                                    <td>{{ $detalle->cantidad }}</td>
+                                  @endif
+                                  <td>{{ $detalle->productoAlmacen->almacen->nombre ?? 'N/A' }}</td> <!-- Nombre del producto -->
 
+                                    <td> {{ $ajuste->tipo == '1' ? 'Egreso' : 'Ingreso' }}</td> <!-- Tipo de ajuste (ingreso o egreso) -->
+                                    <td>{{ $ajuste->glosa }}</td> <!-- Glosa -->
+                                    <td>{{ $ajuste->fecha }}</td> <!-- Fecha del ajuste -->
+                                </tr>
                             @endforeach
-
-
-
-                            <td>
-                                {{ $egreso->tipo == '1' ? 'Vencimiento' :
-                                   ($egreso->tipo == '2' ? 'Renovacion' :
-                                   ($egreso->tipo == '3' ? 'Otro' : 'Venta')) }}
-                            </td>
-                                <td>{{ $egreso->glosa }}</td>
-                                <td>{{ $egreso->fecha }}</td>
-                                <td>
-                                    <div class="action-buttons">
-                                        {{-- <button class="btn-edit" onclick="egresoController.openModal({{ $egreso->id }})">
-                                        <i class="fas fa-edit"></i>
-                                    </button> --}}
-                                        {{-- <button type="button"
-                                            class="btn-delete"
-                                            onclick="egresoController.delete({{ $egreso->id }})"
-                                            title="Eliminar egreso">
-                                        <i class="fas fa-trash"></i>
-                                    </button> --}}
-                                    </div>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="7">
-                                    <div class="empty-state">
-                                        <i class="fas fa-paw"></i>
-                                        <p>No hay ingresos registradas</p>
-                                        <button type="button" class="btn-add" onclick="egresoController.openModal()">
-                                            Agregar Primera Ingreso
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforelse
+                        @endforeach
                     </tbody>
                 </table>
             </div>
@@ -95,7 +67,7 @@
         <div class="modal-backdrop"></div>
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title">Nuevo Egreso</h2>
+                <h2 class="modal-title">Nuevo</h2>
                 <button type="button" class="btn-close" onclick="egresoController.closeModal()">
                     <i class="fas fa-times"></i>
                 </button>
@@ -125,13 +97,12 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="tipo">Tipo de Egreso</label>
+                            <label for="tipo">Tipo</label>
                             <select id="tipo" name="tipo" required>
-                                <option value="">Seleccionar Tipo de Egreso</option>
-                                <option value="1">Vencimiento</option>
-                                <option value="2">Renovacion</option>
+                                <option value="">Seleccionar Tipo de inventario</option>
+                                <option value="1">Egreso</option>
+                                <option value="2">Ingreso</option>
 
-                                <option value="3">Otro</option>
                             </select>
                             <span class="error-message"></span>
                         </div>
@@ -223,7 +194,7 @@
             this.resetForm();
 
             const title = this.modal.querySelector('.modal-title');
-            title.textContent = id ? 'Editar Engreso' : 'Nuevo Egreso';
+            title.textContent = id ? 'Editar' : 'Nuevo';
 
             if (id) {
                 this.loadMascotaData(id);
@@ -253,7 +224,7 @@
 
         async loadMascotaData(id) {
             try {
-                const response = await fetch(`/egresoInventarios/${id}`);
+                const response = await fetch(`/ajusteInventarios/${id}`);
                 const data = await response.json();
 
                 if (!response.ok) throw new Error(data.message || 'Error al cargar datos');
@@ -296,11 +267,11 @@
                 const egresoId = document.getElementById('egreso_id').value;
 
 
-                let url = '/egresoInventarios';
+                let url = '/ajusteInventarios';
                 let method = 'POST';
 
                 if (egresoId) {
-                    url = `/egresoInventarios/${egresoId}`;
+                    url = `/ajusteInventarios/${egresoId}`;
                     formData.append('_method', 'PUT');
                 }
 
@@ -412,7 +383,7 @@
 
                 if (!result.isConfirmed) return;
 
-                const response = await fetch(`/egresoInventarios/${id}`, {
+                const response = await fetch(`/ajusteInventarios/${id}`, {
                     method: 'DELETE',
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,

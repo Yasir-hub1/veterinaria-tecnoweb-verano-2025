@@ -28,6 +28,10 @@ class ProductoAlmacen extends Model
     {
         return $this->hasMany(DetalleVenta::class);
     }
+    public function detallesAjuste()
+    {
+        return $this->hasMany(DestalleAjuste::class, 'producto_id', 'id');
+    }
 
 
 }

@@ -22,6 +22,6 @@ class DestalleAjuste extends Model
     // Relationship to ProductoAlmacen
     public function productoAlmacen()
     {
-        return $this->belongsTo(ProductoAlmacen::class, 'producto_id', 'producto_id');
+        return $this->belongsTo(ProductoAlmacen::class, 'producto_id', 'id');
     }
 }

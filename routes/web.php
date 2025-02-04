@@ -119,13 +119,13 @@ Route::prefix('almacenes')->group(function () {
         });
     });
 
-    Route::prefix('egresoInventarios')->group(function () {
+    Route::prefix('ajusteInventarios')->group(function () {
         Route::controller(AjusteInventarioController::class)->group(function () {
-            Route::get('/', 'index')->name('egresoInventarios.index');
-            Route::post('/', 'store')->name('egresoInventarios.store');
-            Route::get('/{producto}', 'show')->name('egresoInventarios.show');
-            Route::put('/{producto}', 'update')->name('egresoInventarios.update');
-            Route::delete('/{producto}', 'destroy')->name('egresoInventarios.destroy');
+            Route::get('/', 'index')->name('ajusteInventarios.index');
+            Route::post('/', 'store')->name('ajusteInventarios.store');
+            Route::get('/{producto}', 'show')->name('ajusteInventarios.show');
+            Route::put('/{producto}', 'update')->name('ajusteInventarios.update');
+            Route::delete('/{producto}', 'destroy')->name('ajusteInventarios.destroy');
         });
     });
 

@@ -233,13 +233,13 @@
                             <i class="fas fa-box"></i>
                             <span>Productos</span>
                         </a>
-                        <a href="{{ route('inventarios.index') }}" class="nav-item">
+                        {{-- <a href="{{ route('inventarios.index') }}" class="nav-item">
                             <i class="fas fa-warehouse"></i>
                             <span>Ingreso de Inventario</span>
-                        </a>
-                        <a href="{{ route('egresoInventarios.index') }}" class="nav-item">
+                        </a> --}}
+                        <a href="{{ route('ajusteInventarios.index') }}" class="nav-item">
                             <i class="fas fa-warehouse"></i>
-                            <span>Egreso de Inventario</span>
+                            <span>Ajuste de Inventario</span>
                         </a>
                         <a href="{{ route('almacenes.index') }}" class="nav-item">
                             <i class="fas fa-store"></i>

@@ -1,4 +1,4 @@
-{{-- resources/views/egresoInventarios/index.blade.php --}}
+{{-- resources/views/ajusteInventarios/index.blade.php --}}
 @extends('layouts.app')
 
 @section('title', 'Gestión de ingresos | Sistema Veterinario')
@@ -172,7 +172,7 @@
 
         async loadMascotaData(id) {
             try {
-                const response = await fetch(`/egresoInventarios/${id}`);
+                const response = await fetch(`/ajusteInventarios/${id}`);
                 const data = await response.json();
 
                 if (!response.ok) throw new Error(data.message || 'Error al cargar datos');
@@ -215,11 +215,11 @@
                 const egresoId = document.getElementById('egreso_id').value;
 
 
-                let url = '/egresoInventarios';
+                let url = '/ajusteInventarios';
                 let method = 'POST';
 
                 if (egresoId) {
-                    url = `/egresoInventarios/${egresoId}`;
+                    url = `/ajusteInventarios/${egresoId}`;
                     formData.append('_method', 'PUT');
                 }
 
@@ -331,7 +331,7 @@
 
                 if (!result.isConfirmed) return;
 
-                const response = await fetch(`/egresoInventarios/${id}`, {
+                const response = await fetch(`/ajusteInventarios/${id}`, {
                     method: 'DELETE',
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,

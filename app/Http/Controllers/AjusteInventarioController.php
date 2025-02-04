@@ -13,13 +13,14 @@ class AjusteInventarioController extends Controller
 {
     public function index()
     {
-        $egresos =AjusteInventario::with([
-            'detalles.productoAlmacen.producto',"usuario"
+        $ajustes = AjusteInventario::with([
+            'usuario', // Usuario que realizó el ajuste
+            'detalles.productoAlmacen.producto' // Producto ajustado a través de ProductoAlmacen
         ])->get();
 
     $ingresos = ProductoAlmacen::with(['producto', 'almacen'])->get();
 
-    return view('egresoInventario.index', compact("ingresos", 'egresos'));
+    return view('egresoInventario.index', compact("ingresos", 'ajustes'));
     }
 
 
@@ -27,29 +28,42 @@ class AjusteInventarioController extends Controller
     {
         // Validación inicial de campos
         $request->validate([
-            'ingreso_id' => 'required',
-            'tipo' => 'required|in:1,2,3',
+            'ingreso_id' => 'required|integer',
+            'tipo' => 'required|integer',
             'glosa' => 'required|string|max:255',
             'stock' => 'required|numeric|min:1'
         ]);
 
-        // Iniciamos una transacción para asegurar la integridad de los datos
-        return DB::transaction(function () use ($request) {
-            // Obtener el producto de almacén
-            $productoAlmacen = ProductoAlmacen::find($request->ingreso_id);
+        // Convertir tipo a entero (por seguridad)
+        $tipo = (int) $request->tipo;
 
-            // Verificar si hay suficiente stock
-            if ($productoAlmacen->stock < $request->stock) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Stock insuficiente. Stock disponible: ' . $productoAlmacen->stock
-                ], 422);
+        return DB::transaction(function () use ($request, $tipo) {
+            // Obtener el producto de almacén
+            $productoAlmacen = ProductoAlmacen::findOrFail($request->ingreso_id);
+
+            if ($tipo === 1) { // Egreso de inventario
+                // Verificar si hay suficiente stock
+                if ($productoAlmacen->stock < $request->stock) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Stock insuficiente. Stock disponible: ' . $productoAlmacen->stock
+                    ], 422);
+                }
+
+                // Restar el stock
+                $productoAlmacen->stock -= $request->stock;
+            } else { // Ingreso de inventario
+                // Sumar el stock
+                $productoAlmacen->stock += $request->stock;
             }
+
+            // Guardar la actualización de stock
+            $productoAlmacen->save();
 
             // Crear el ajuste de inventario
             $ajuste = AjusteInventario::create([
                 'usuario_id' => auth()->id(),
-                'tipo' => $request->tipo,
+                'tipo' => $tipo,
                 'fecha' => Carbon::now(),
                 'glosa' => $request->glosa
             ]);
@@ -57,20 +71,17 @@ class AjusteInventarioController extends Controller
             // Crear el detalle del ajuste
             DB::table('detalles_ajuste')->insert([
                 'ajuste_id' => $ajuste->id,
-                'producto_id' => $productoAlmacen->producto_id,
+                'producto_id' => $productoAlmacen->id,
                 'cantidad' => $request->stock
             ]);
 
-            // Actualizar el stock
-            $productoAlmacen->stock -= $request->stock;
-            $productoAlmacen->save();
-
             return response()->json([
                 'success' => true,
-                'message' => 'Egreso de inventario registrado con éxito'
+                'message' => ($tipo === 1) ? 'Egreso de inventario registrado con éxito' : 'Ingreso de inventario registrado con éxito'
             ]);
         });
     }
+
 
 
     /**

@@ -26,12 +26,12 @@ class AjusteInventario extends Model
     public function productosAlmacen()
     {
         return $this->hasManyThrough(
-            ProductoAlmacen::class,    // Target model
-            DestalleAjuste::class,      // Intermediate model
-            'ajuste_id',               // Foreign key on detalles_ajuste
-            'producto_id',             // Foreign key on productos_almacen
-            'id',                      // Local key on ajustes_inventario
-            'producto_id'              // Local key on detalles_ajuste
+            ProductoAlmacen::class,    // Modelo objetivo
+            DestalleAjuste::class,      // Modelo intermedio
+            'ajuste_id',               // Clave foránea en DetalleAjuste
+            'id',                      // Clave foránea en ProductoAlmacen (ajustada correctamente)
+            'id',                      // Clave local en AjusteInventarios
+            'producto_id'              // Clave local en DetalleAjuste
         );
     }
 
