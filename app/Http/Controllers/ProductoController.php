@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Almacen;
 use App\Models\Categoria;
 use App\Models\Producto;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class ProductoController extends Controller
@@ -12,8 +14,9 @@ class ProductoController extends Controller
     public function index()
     {
         $productos = Producto::with('categoria')->get();
+        $almacenes=Almacen::all();
         $categorias = Categoria::all();
-        return view('productos.index', compact('productos', 'categorias'));
+        return view('productos.index', compact('productos', 'categorias',"almacenes"));
     }
 
     public function show($id)
@@ -39,7 +42,13 @@ class ProductoController extends Controller
             $data['imagen'] = $request->file('imagen')->store('productos', 'public');
         }
 
-        Producto::create($data);
+        $producto= Producto::create($data);
+
+        DB::table('productos_almacen')->insert([
+            'producto_id' => $producto->id,
+            'almacen_id' => $request->almacen_id,
+            'stock' => "0"
+        ]);
         return response()->json(['success' => true, 'message' => 'Producto registrada con éxito']);
     }
 

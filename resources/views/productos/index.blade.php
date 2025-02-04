@@ -143,7 +143,20 @@
                     </div>
 
 
-
+                    <div class="form-group">
+                        <label for="almacen_id">Almacen</label>
+                        <select id="almacen_id"
+                                name="almacen_id"
+                                required>
+                            <option value="">Seleccionar almacenes</option>
+                            @foreach($almacenes as $almacen)
+                                <option value="{{ $almacen->id }}">
+                                    {{ $almacen->nombre }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <span class="error-message"></span>
+                    </div>
                     {{-- <div class="form-group">
                         <label for="stock">Stock</label>
                         <input type="number"
@@ -287,6 +300,7 @@
             document.getElementById('producto_id').value = data.id;
             document.getElementById('nombre').value = data.nombre;
             document.getElementById('categoria_id').value = data.categoria_id;
+            document.getElementById('almacen_id').value = data.almacen_id;
             document.getElementById('descripcion').value = data.descripcion;
             // document.getElementById('stock').value = data.stock;
             document.getElementById('precio').value = data.precio;
@@ -367,6 +381,7 @@
             let isValid = true;
             const requiredFields = {
                 'categoria_id': 'Seleccione un categoria',
+                'almacen_id': 'Seleccione un almacen',
                 'nombre': 'Ingrese el nombre',
                 'descripcion': 'Ingrese la descripcion',
                 // 'stock': 'Ingrese la stock',
