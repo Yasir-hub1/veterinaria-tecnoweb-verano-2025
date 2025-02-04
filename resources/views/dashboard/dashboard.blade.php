@@ -221,7 +221,7 @@
                 @endif
 
                 <!-- Módulo 3: Gestión de Inventario -->
-                @if(auth()->user()->hasAnyPermission(['guardar_inventario', 'editar_inventario', 'eliminar_inventario']))
+                @if(auth()->user()->hasAnyPermission(['ver_ajuste_inventario',"editar_almacen","eliminar_almacen","guardar_almacen","editar_producto","eliminar_producto","guardar_producto"]))
                 <div class="nav-module">
                     <div class="module-header">
                         <i class="fas fa-boxes"></i>
@@ -229,18 +229,22 @@
                         <i class="fas fa-chevron-down"></i>
                     </div>
                     <nav class="nav-menu">
+                        @if(auth()->user()->hasAnyPermission(["editar_producto","eliminar_producto","guardar_producto"]))
                         <a href="{{ route('productos.index') }}" class="nav-item">
                             <i class="fas fa-box"></i>
                             <span>Productos</span>
                         </a>
+                        @endif
                         {{-- <a href="{{ route('inventarios.index') }}" class="nav-item">
                             <i class="fas fa-warehouse"></i>
                             <span>Ingreso de Inventario</span>
                         </a> --}}
+                        @if(auth()->user()->hasAnyPermission(['ver_ajuste_inventario']))
                         <a href="{{ route('ajusteInventarios.index') }}" class="nav-item">
                             <i class="fas fa-warehouse"></i>
                             <span>Ajuste de Inventario</span>
                         </a>
+                        @endif
                         <a href="{{ route('almacenes.index') }}" class="nav-item">
                             <i class="fas fa-store"></i>
                             <span>Almacenes</span>
@@ -275,7 +279,7 @@
                 @endif
 
                 <!-- Módulo 5: Reportes y Estadísticas -->
-                @if(auth()->user()->hasPermission('ver_reporte'))
+                @if(auth()->user()->hasPermission('ver_reporte_venta'))
                 <div class="nav-module">
                     <div class="module-header">
                         <i class="fas fa-chart-line"></i>
@@ -285,7 +289,7 @@
                     <nav class="nav-menu">
                         <a href="{{ route('reportes.index') }}" class="nav-item">
                             <i class="fas fa-chart-bar"></i>
-                            <span>Reportes</span>
+                            <span>Reporte de venta</span>
                         </a>
                     </nav>
                 </div>

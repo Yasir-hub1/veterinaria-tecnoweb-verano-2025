@@ -22,7 +22,7 @@ class RolesPermisosSeeder extends Seeder
             'gestionar_inventario',
             'gestionar_ventas',
             'gestionar_pagos',
-            'ver_reportes',
+            'ver_reporte_ventas',
         ];
 
         foreach ($permisos as $permiso) {

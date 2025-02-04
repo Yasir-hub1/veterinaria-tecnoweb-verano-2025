@@ -76,7 +76,7 @@
             @endif
 
             <!-- Módulo 3: Gestión de Inventario -->
-            @if(auth()->user()->hasAnyPermission(['guardar_inventario', 'editar_inventario', 'eliminar_inventario']))
+            @if(auth()->user()->hasAnyPermission(['guardar_ajuste_inventario', 'editar_ajuste_inventario', 'eliminar_inventario']))
             <div class="nav-module">
                 <div class="module-header">
                     <i class="fas fa-boxes"></i>
@@ -133,7 +133,7 @@
             @endif
 
             <!-- Módulo 5: Reportes y Estadísticas -->
-            @if(auth()->user()->hasPermission('ver_reporte'))
+            @if(auth()->user()->hasPermission('ver_reporte_venta'))
             <div class="nav-module">
                 <div class="module-header">
                     <i class="fas fa-chart-line"></i>

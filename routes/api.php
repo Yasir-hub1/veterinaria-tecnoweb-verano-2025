@@ -62,7 +62,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
 
     // CU08: Reportes y Estadísticas
-    Route::middleware(['verificar.permiso:ver_reportes'])->group(function () {
+    Route::middleware(['verificar.permiso:ver_reporte_ventas'])->group(function () {
         Route::get('reportes/ventas', [ReporteController::class, 'reporteVentas']);
         Route::get('reportes/servicios', [ReporteController::class, 'reporteServicios']);
         Route::get('reportes/inventario', [ReporteController::class, 'reporteInventario']);
