@@ -171,7 +171,7 @@
     <x-app.footer />
 @endsection
 
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
     const mascotaController = {
         modal: null,
@@ -532,9 +532,9 @@
         border-bottom: 1px solid var(--border-color);
     }
 
-    .usuario-table tbody tr:hover {
+    /* .usuario-table tbody tr:hover {
         background-color: #f8fafc;
-    }
+    } */
 
     /* Imágenes de usuarios */
     .usuario-image-container {
