@@ -106,10 +106,10 @@
                                     <span>Productos</span>
                                 </a>
                             @endif
-                            {{-- <a href="{{ route('inventarios.index') }}" class="nav-item">
+                            <a href="{{ route('inventarios.index') }}" class="nav-item">
                             <i class="fas fa-warehouse"></i>
-                            <span>Ingreso de Inventario</span>
-                        </a> --}}
+                            <span>Registro de Inventario</span>
+                        </a>
                             @if (auth()->user()->hasAnyPermission(['ver_ajuste_inventario']))
                                 <a href="{{ route('ajusteInventarios.index') }}" class="nav-item">
                                     <i class="fas fa-warehouse"></i>
