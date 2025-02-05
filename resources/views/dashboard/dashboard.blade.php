@@ -162,6 +162,10 @@
                                 <i class="fas fa-chart-bar"></i>
                                 <span>Reporte de venta</span>
                             </a>
+                            <a href="{{ route('reportesOrdenServicio.index') }}" class="nav-item">
+                                <i class="fas fa-chart-bar"></i>
+                                <span>Reporte de Orden de servicio</span>
+                            </a>
                         </nav>
                     </div>
                 @endif

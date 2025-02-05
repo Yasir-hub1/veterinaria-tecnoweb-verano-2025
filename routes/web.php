@@ -141,6 +141,7 @@ Route::prefix('almacenes')->group(function () {
     });
 
 
+
      Route::prefix('ordenServicios')->group(function () {
         Route::controller(OrdenServicioController::class)->group(function () {
             Route::get('/', 'index')->name('ordenServicios.index');
@@ -181,5 +182,11 @@ Route::prefix('almacenes')->group(function () {
         Route::get('/ventas', [ReporteController::class, 'index'])->name('reportes.index');
         Route::post('/generar', [ReporteController::class, 'generarReporte'])->name('reportes.generar');
         Route::get('/exportar', [ReporteController::class, 'exportarExcel'])->name('reportes.exportar');
+    });
+
+    Route::prefix('reportesOrdenServicio')->group(function () {
+        Route::get('/orden', [OrdenServicioController::class, 'reporte'])->name('reportesOrdenServicio.index');
+        Route::post('/generarOrden', [OrdenServicioController::class, 'generarReporte'])->name('reportesOrdenServicio.generar');
+        Route::get('/exportar', [OrdenServicioController::class, 'exportarExcel'])->name('reportesOrdenServicio.exportar');
     });
 });

@@ -147,7 +147,11 @@
                     <nav class="nav-menu">
                         <a href="{{ route('reportes.index') }}" class="nav-item">
                             <i class="fas fa-chart-bar"></i>
-                            <span>Reportes</span>
+                            <span>Reporte de venta</span>
+                        </a>
+                        <a href="{{ route('reportesOrdenServicio.index') }}" class="nav-item">
+                            <i class="fas fa-chart-bar"></i>
+                            <span>Reporte de Orden de servicio</span>
                         </a>
                     </nav>
                 </div>

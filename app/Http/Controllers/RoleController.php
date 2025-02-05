@@ -73,6 +73,7 @@ class RoleController extends Controller
         'Gestión de Reportes y estadisticas' => [
             // aquí los permisos de reportes
             'ver_reporte_venta',
+            'ver_reporte_orden_servicio',
 
         ]
     ];
