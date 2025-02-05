@@ -46,7 +46,7 @@ class RoleController extends Controller
 
             'guardar_ajuste_inventario',
             'ver_ajuste_inventario',
-
+             'guardar_reg_inventario',
 
             'guardar_producto',
             'editar_producto',
