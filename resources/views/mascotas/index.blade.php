@@ -154,16 +154,14 @@
 
                     <div class="form-group">
                         <label for="tipo">Tipo</label>
-                        <select id="tipo"
-                                name="tipo"
-                                required>
-                            <option value="">Seleccionar Tipo</option>
-                            <option value="Perro">Perro</option>
-                            <option value="Gato">Gato</option>
-                            <option value="Ave">Ave</option>
-                            <option value="Otro">Otro</option>
-                        </select>
+                        <input type="text"
+                               id="tipo"
+                               name="tipo"
+                               required
+                               maxlength="100"
+                               autocomplete="off">
                         <span class="error-message"></span>
+
                     </div>
 
                     <div class="form-group">
