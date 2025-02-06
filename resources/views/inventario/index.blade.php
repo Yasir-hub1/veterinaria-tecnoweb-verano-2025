@@ -7,9 +7,9 @@
 <div class="ingreso-container">
     <!-- Header Section -->
     <div class="ingreso-header">
-        <h1>Ingreso de Inventarios</h1>
+        <h1>Registro de Inventarios</h1>
         <button type="button" class="btn-add" onclick="mascotaController.openModal()">
-            <i class="fas fa-plus"></i> Nuevo Ingreso
+            <i class="fas fa-plus"></i> Nuevo
         </button>
     </div>
 
@@ -26,7 +26,7 @@
 
 
 
-                        <th>Acciones</th>
+                        {{-- <th>Acciones</th> --}}
                     </tr>
                 </thead>
                 <tbody>
@@ -40,7 +40,7 @@
 
                             <td>{{ $ingreso->stock }}</td>
 
-                            <td>
+                            {{-- <td>
                                 <div class="action-buttons">
                                     <button class="btn-edit" onclick="mascotaController.openModal({{ $ingreso->id }})">
                                         <i class="fas fa-edit"></i>
@@ -52,7 +52,7 @@
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
-                            </td>
+                            </td> --}}
                         </tr>
                     @empty
                         <tr>
@@ -80,7 +80,7 @@
     <div class="modal-backdrop"></div>
     <div class="modal-content">
         <div class="modal-header">
-            <h2 class="modal-title">Nuevo Ingreso</h2>
+            <h2 class="modal-title">Nuevo</h2>
             <button type="button" class="btn-close" onclick="mascotaController.closeModal()">
                 <i class="fas fa-times"></i>
             </button>
@@ -193,7 +193,7 @@
             this.resetForm();
 
             const title = this.modal.querySelector('.modal-title');
-            title.textContent = id ? 'Editar Ingreso' : 'Nuevo Ingreso';
+            title.textContent = id ? 'Editar ' : 'Nuevo';
 
             if (id) {
                 this.loadMascotaData(id);

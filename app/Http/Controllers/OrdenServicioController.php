@@ -17,7 +17,7 @@ class OrdenServicioController extends Controller
     public function index()
     {
         $servicios = Servicio::all();
-        $ordenServicios = OrdenServicio::with(['mascota', 'usuario'])->orderBy('id','desc')->get();
+        $ordenServicios = OrdenServicio::with(['mascota', 'usuario',"pago"])->orderBy('id','desc')->get();
         $mascotas = Mascota::all();
         return view('ordenServicio.index', compact("mascotas", 'servicios', 'ordenServicios'));
     }

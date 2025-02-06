@@ -16,4 +16,9 @@ class Pago extends Model
     {
         return $this->belongsTo(NotaVenta::class);
     }
+
+    public function ordenServicio()
+    {
+        return $this->belongsTo(OrdenServicio::class);
+    }
 }

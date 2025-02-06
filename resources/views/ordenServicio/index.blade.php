@@ -40,7 +40,7 @@
                             <td>{{ $ordenServicio->mascota->nombre }}</td>
 
                             <td>{{ $ordenServicio->fecha }}</td>
-                            <td>{{ $ordenServicio->tipopago == 1 ? 'Pago con QR' : ($ordenServicio->tipopago == 2 ? 'Pago con Tigo Money' : 'Método desconocido') }}</td>
+                            <td>{{ ($ordenServicio->pago->tipopago == 1 ? 'Pago con QR' : ($ordenServicio->pago->tipopago == 2 ? 'Pago con Tigo Money' : 'Método desconocido')) }}</td>
                             <td style="color: {{ $ordenServicio->estado == 1 ? 'green' : ($ordenServicio->estado == 2 ? 'red' : 'black') }}">
                                 {{ $ordenServicio->estado == 1 ? 'Activo' : ($ordenServicio->estado == 2 ? 'Anulado' : 'Error') }}
                             </td>

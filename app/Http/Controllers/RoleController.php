@@ -17,25 +17,33 @@ class RoleController extends Controller
     // Define las secciones y sus permisos relacionados
     $permisosAgrupados = [
         'Gestión de Usuarios' => [
+            'ver_usuario',
             'guardar_usuario',
             'editar_usuario',
             'eliminar_usuario',
 
+            'ver_rol',
             'guardar_rol',
             'editar_rol',
             'eliminar_rol',
 
+            "ver_rol",
+            "asignar_rol"
+
         ],
         'Gestión de Mascotas' => [
+
+            'ver_mascota',
             'guardar_mascota',
             'editar_mascota',
             'eliminar_mascota',
 
+            'ver_cliente',
             'guardar_cliente',
             'editar_cliente',
             'eliminar_cliente',
 
-
+            'ver_servicio',
             'guardar_servicio',
             'editar_servicio',
             'eliminar_servicio',
@@ -44,14 +52,20 @@ class RoleController extends Controller
         ],
         'Gestión de Inventario' => [
 
-            'guardar_ajuste_inventario',
-            'ver_ajuste_inventario',
-             'guardar_reg_inventario',
-
+            'ver_producto',
             'guardar_producto',
             'editar_producto',
             'eliminar_producto',
 
+             'ver_registro_inventario',
+            'guardar_registro_inventario',
+
+
+            'ver_ajuste_inventario',
+            'guardar_ajuste_inventario',
+
+
+            'ver_almacen',
             'guardar_almacen',
             'editar_almacen',
             'eliminar_almacen',
@@ -59,16 +73,16 @@ class RoleController extends Controller
 
         'Gestión de Ventas' => [
             // aquí los permisos de ventas
+            'ver_venta',
             'guardar_venta',
-
-            'eliminar_venta',
+            // 'eliminar_venta',
 
             'ver_pago',
 
-
+            'ver_orden_servicio',
             'guardar_orden_servicio',
 
-            'eliminar_orden_servicio'
+            // 'eliminar_orden_servicio'
         ],
         'Gestión de Reportes y estadisticas' => [
             // aquí los permisos de reportes
