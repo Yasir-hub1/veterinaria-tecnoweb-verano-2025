@@ -134,7 +134,7 @@ class PagoController extends Controller
                      'fecha' => now(),
                      'estado' => 1,
                      'total' => $request->tnMonto,
-                     'tipopago' => $request->tnTipoServicio,
+
                  ]);
 
                  Pago::create([
@@ -234,7 +234,7 @@ class PagoController extends Controller
                 'fecha' => now(),
                 'estado' => 1,
                 'total' => $request->tnMonto,
-                'tipopago' => $request->tnTipoServicio,
+
             ]);
 
             // Crear el pago
