@@ -15,6 +15,7 @@
             <i class="fas fa-plus"></i> Nueva Venta
         </button>
         @endif
+
     </div>
 
     <!-- Table Section -->
@@ -39,7 +40,8 @@
                             <td>{{ $notaVenta->usuario->name }}</td>
                             <td>{{ $notaVenta->cliente->nombre }}</td>
                             <td>{{ $notaVenta->fecha }}</td>
-                            <td>{{ $notaVenta->tipopago == 1 ? 'Pago con QR' : ($notaVenta->tipopago == 2 ? 'Pago con Tigo Money' : 'Método desconocido') }}</td>
+                            <td>{{ ($notaVenta->pago->tipopago == 1 ? 'Pago con QR' : ($notaVenta->pago->tipopago == 2 ? 'Pago con Tigo Money' : 'Método desconocido')) }}</td>
+
                             <td style="color: {{ $notaVenta->estado == 1 ? 'green' : ($notaVenta->estado == 2 ? 'red' : 'black') }}">
                                 {{ $notaVenta->estado == 1 ? 'Activo' : ($notaVenta->estado == 2 ? 'Anulado' : 'Error') }}
                             </td>

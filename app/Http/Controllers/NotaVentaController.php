@@ -12,7 +12,7 @@ class NotaVentaController extends Controller
     public function index()
     {
         $productos = ProductoAlmacen::with(['producto'])->get();
-        $notaVentas = NotaVenta::with(['cliente', 'usuario'])->orderBy('id','desc')->get();
+        $notaVentas = NotaVenta::with(['cliente', 'usuario',"pago"])->orderBy('id','desc')->get();
         $clientes = Cliente::all();
         return view('notaVenta.index', compact("clientes", 'productos', 'notaVentas'));
     }

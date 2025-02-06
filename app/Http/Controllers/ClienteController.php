@@ -76,7 +76,7 @@ class ClienteController extends Controller
             $cliente = Cliente::find($id);
             $request->validate([
                 'nombre' => 'required|string|max:255',
-                'email' => 'required|string|email|max:255|unique:clientes',
+                'email' => 'required',
                 'razon_social' => 'required|string|unique:clientes',
                 'celular' => 'required|string',
                 'nit' => 'required',

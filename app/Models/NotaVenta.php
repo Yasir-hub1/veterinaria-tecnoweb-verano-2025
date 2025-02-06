@@ -4,13 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class NotaVenta extends Model
 {
     use HasFactory;
     public $timestamps = false;
     protected $table = "notas_venta";
-    protected $fillable = ['cliente_id',"usuario_id","fecha","tipopago","total","estado"];
+    protected $fillable = ['cliente_id',"usuario_id","fecha","total","estado"];
 
     public function cliente()
     {
@@ -27,5 +28,10 @@ class NotaVenta extends Model
     {
         return $this->belongsToMany(ProductoAlmacen::class, 'detalles_ventas')
                     ->withPivot('cantidad', 'precio'); // columnas adicionales si las tienes
+    }
+
+    public function pago(): HasOne
+    {
+        return $this->hasOne(Pago::class);
     }
 }

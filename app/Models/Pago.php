@@ -11,4 +11,9 @@ class Pago extends Model
     public $timestamps = false;
     protected $table = "pagos";
     protected $fillable = ["orden_servicio_id",'nota_venta_id',"fechapago","estado","","tipopago"];
+
+    public function notaVenta()
+    {
+        return $this->belongsTo(NotaVenta::class);
+    }
 }
