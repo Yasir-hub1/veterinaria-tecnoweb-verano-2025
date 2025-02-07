@@ -62,7 +62,7 @@
                                                 title="Eliminar mascota">
                                             <i class="fas fa-trash"></i>
                                         </button>
-                                        @endif
+
                                     @endif
                                 </div>
                             </td>
@@ -81,6 +81,7 @@
                                             onclick="mascotaController.openModal()">
                                         Agregar Primera Mascota
                                     </button>
+                                    @endif
                                 </div>
                             </td>
                         </tr>
