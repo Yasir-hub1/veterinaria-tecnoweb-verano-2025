@@ -1,546 +1,666 @@
 @extends('layouts.app')
 
-@section('title', 'Gestión de servicios | Sistema Veterinario')
+@section('title', 'Reporte de Servicios')
 
 @section('content')
     <div class="container mx-auto px-4 py-6">
         <div class="bg-white rounded-lg shadow-lg p-6">
-            <h1 class="text-2xl font-bold mb-6">Reporte de Orden de servicio</h1>
+            <h1 class="text-2xl font-bold mb-6">Reporte de Servicios Veterinarios</h1>
 
-            <form id="reporteForm" class="space-y-6">
+            <!-- Formulario de Filtros -->
+            <form id="reporteForm" class="form-container">
                 @csrf
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <!-- Fecha Inicio -->
-                    <div>
-                        <label for="fecha_inicio" class="block text-sm font-medium text-gray-700">Fecha Inicio</label>
-                        <input type="date" id="fecha_inicio" name="fecha_inicio"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                            required>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="fecha_inicio">Fecha Inicio</label>
+                        <input type="date" id="fecha_inicio" name="fecha_inicio" class="form-input" required>
                     </div>
 
-                    <!-- Fecha Fin -->
-                    <div>
-                        <label for="fecha_fin" class="block text-sm font-medium text-gray-700">Fecha Fin</label>
-                        <input type="date" id="fecha_fin" name="fecha_fin"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                            required>
+                    <div class="form-group">
+                        <label for="fecha_fin">Fecha Fin</label>
+                        <input type="date" id="fecha_fin" name="fecha_fin" class="form-input" required>
                     </div>
 
-                    <!-- Cliente -->
-                    <div>
-                        <label for="mascota_id" class="block text-sm font-medium text-gray-700">Mascotas</label>
-                        <select id="mascota_id" name="mascota_id"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                            <option value="">Todas las Mascotas</option>
+                    <div class="form-group">
+                        <label for="mascota_id">Mascota</label>
+                        <select id="mascota_id" name="mascota_id" class="form-select">
+                            <option value="">Todas las mascotas</option>
                             @foreach ($mascotas as $mascota)
-                                <option value="{{ $mascota->id }}">{{ $mascota->nombre_completo }}</option>
+                                <option value="{{ $mascota['id'] }}">{{ $mascota['nombre_completo'] }}</option>
                             @endforeach
                         </select>
                     </div>
 
-                    <!-- Usuario -->
-                    <div>
-                        <label for="usuario_id" class="block text-sm font-medium text-gray-700">Usuario</label>
-                        <select id="usuario_id" name="usuario_id"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                            <option value="">Todos los usuarios</option>
-                            @foreach ($usuarios as $usuario)
-                                <option value="{{ $usuario->id }}">{{ $usuario->name }}</option>
-                            @endforeach
-                        </select>
+                    <div class="form-group">
+                        <label>&nbsp;</label>
+                        <button type="submit" class="btn-generar">
+                            Generar Reporte
+                        </button>
                     </div>
-                </div>
-
-                <div class="flex justify-end space-x-4">
-                    <button type="submit"
-                        class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                        Generar Reporte
-                    </button>
-                    <button type="button" id="exportarBtn"
-                        class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                        Exportar CSV
-                    </button>
                 </div>
             </form>
 
-            <!-- Resultados -->
-            <div id="resultados" class="mt-8">
-                <!-- Aquí se cargarán los resultados dinámicamente -->
+            <!-- Gráficos -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="chart-container">
+                    <h3 class="chart-title">Tendencia de Servicios</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="serviciosChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <h3 class="chart-title">Servicios por Tipo de Mascota</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="tiposMascotaChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <h3 class="chart-title">Top 5 Mascotas</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="mascotasChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <h3 class="chart-title">Métricas Clave</h3>
+                    <div id="metricas" class="grid grid-cols-2 gap-4">
+                        <!-- Se llenará dinámicamente -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabla de Resultados -->
+            <div id="tablaResultados" class="overflow-x-auto">
+                <!-- Se llenará dinámicamente -->
             </div>
         </div>
     </div>
 
 
-    <x-app.footer />
+
 @endsection
-<script>
-    // reportesOrdenServicio.js
-    document.addEventListener('DOMContentLoaded', function() {
-        const today = new Date().toISOString().split('T')[0]; // Obtiene la fecha en formato 'YYYY-MM-DD'
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let serviciosChart, tiposMascotaChart, mascotasChart;
 
-        const form = document.getElementById('reporteForm');
-        const resultadosDiv = document.getElementById('resultados');
-        const exportarBtn = document.getElementById('exportarBtn');
-         // Establecer el valor de fecha_inicio y fecha_fin a la fecha actual
-    document.getElementById('fecha_inicio').value = today;
-    document.getElementById('fecha_fin').value = today;
+            // Establecer fechas por defecto
+            const hoy = new Date();
+            const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+            document.querySelector('input[name="fecha_inicio"]').value = inicioMes.toISOString().split('T')[0];
+            document.querySelector('input[name="fecha_fin"]').value = hoy.toISOString().split('T')[0];
 
-        form.addEventListener('submit', async function(e) {
-            e.preventDefault();
-
-            try {
-                // Mostrar loader
-                resultadosDiv.innerHTML = '<div class="loader">Cargando...</div>';
-
-                const formData = new FormData(form);
-                const response = await fetch("{{ route('reportesOrdenServicio.generar') }}", {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
-                            .content,
-                        'Accept': 'application/json'
+            function inicializarGraficos() {
+                // Gráfico de servicios diarios
+                const ctxServicios = document.getElementById('serviciosChart').getContext('2d');
+                serviciosChart = new Chart(ctxServicios, {
+                    type: 'line',
+                    data: {
+                        labels: [],
+                        datasets: [{
+                            label: 'Total Servicios',
+                            data: [],
+                            borderColor: '#4299e1',
+                            backgroundColor: 'rgba(66, 153, 225, 0.1)',
+                            fill: true
+                        }]
                     },
-                    body: formData
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false
+                    }
                 });
 
-                if (!response.ok) {
-                    throw new Error('Error en la petición');
-                }
+                // Gráfico de tipos de mascota
+                const ctxTipos = document.getElementById('tiposMascotaChart').getContext('2d');
+                tiposMascotaChart = new Chart(ctxTipos, {
+                    type: 'doughnut',
+                    data: {
+                        labels: [],
+                        datasets: [{
+                            data: [],
+                            backgroundColor: [
+                                '#4299e1',
+                                '#48bb78',
+                                '#ecc94b',
+                                '#ed64a6',
+                                '#9f7aea'
+                            ]
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false
+                    }
+                });
 
-                const data = await response.json();
-
-                if (data.error) {
-                    throw new Error(data.error);
-                }
-
-                actualizarResultados(data);
-
-            } catch (error) {
-                console.error('Error:', error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Error al generar el reporte: ' + error.message
+                // Gráfico de mascotas
+                const ctxMascotas = document.getElementById('mascotasChart').getContext('2d');
+                mascotasChart = new Chart(ctxMascotas, {
+                    type: 'bar',
+                    data: {
+                        labels: [],
+                        datasets: [{
+                            label: 'Total Servicios',
+                            data: [],
+                            backgroundColor: '#4299e1'
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false
+                    }
                 });
             }
-        });
 
-        exportarBtn.addEventListener('click', function() {
-            const form = document.getElementById('reporteForm');
-            if (!form.checkValidity()) {
-                form.reportValidity();
-                return;
-            }
+            inicializarGraficos();
 
-            const formData = new FormData(form);
-            const params = new URLSearchParams(formData);
-            window.location.href = `{{ route('reportesOrdenServicio.exportar') }}?${params.toString()}`;
-        });
+            // Manejar envío del formulario
+            document.getElementById('reporteForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
 
-        function actualizarResultados(data) {
-            const {
-                ventas,
-                resumen,
-                pagos_por_tipo
-            } = data;
+                try {
+                    const formData = new FormData(this);
+                    const response = await fetch("{{ route('reportesOrdenServicio.generar') }}", {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                .content,
+                            'Accept': 'application/json'
+                        },
+                        body: formData
+                    });
 
-            // Actualizar resumen
-            actualizarResumen(resumen);
+                    if (!response.ok) throw new Error('Error en la petición');
 
-            // Actualizar tabla de ventas
-            actualizarTablaVentas(ventas);
+                    const data = await response.json();
 
-            // Hacer visible la sección de resultados
-            resultadosDiv.style.display = 'block';
-        }
+                    actualizarGraficos(data);
+                    actualizarResumen(data.resumen);
+                    actualizarTabla(data.servicios);
 
-        function actualizarTablaVentas(ventas) {
-            const tabla = document.createElement('table');
-            tabla.classList.add('tabla-ventas');
-
-            // Crear encabezados
-            const thead = document.createElement('thead');
-            thead.innerHTML = `
-            <tr>
-                <th>ID</th>
-                <th>Fecha</th>
-                <th>Mascota</th>
-                <th>Usuario</th>
-                <th>Tipo Pago</th>
-                <th>Total</th>
-                <th>Estado</th>
-            </tr>
-        `;
-            tabla.appendChild(thead);
-
-            // Crear cuerpo de la tabla
-            const tbody = document.createElement('tbody');
-            ventas.forEach(venta => {
-                const row = document.createElement('tr');
-                const tipoPago = venta.tipopago == 1 ? 'QR' : (venta.tipopago == 2 ? 'Tigo Money' : 'Otro');
-                row.innerHTML = `
-            <td>${venta.id}</td>
-            <td>${new Date(venta.fecha).toLocaleDateString()}</td>
-            <td>${venta.mascota.nombre}</td>
-            <td>${venta.usuario.name}</td>
-            <td>${tipoPago}</td>
-            <td class="text-right">${parseFloat(venta.total).toFixed(2)} Bs</td>
-            <td>
-                <span class="estado-badge ${Number(venta.estado) === 1 ? 'activo' : 'inactivo'}">
-                    ${Number(venta.estado) === 1 ? 'Activo' : 'Inactivo'}
-                </span>
-            </td>
-        `;
-                tbody.appendChild(row);
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Error al generar el reporte: ' + error.message);
+                }
             });
-            tabla.appendChild(tbody);
 
-            // Limpiar y actualizar el contenedor de resultados
-            const tablaContainer = document.createElement('div');
-            tablaContainer.classList.add('tabla-container');
-            tablaContainer.appendChild(tabla);
+            function actualizarGraficos(data) {
+                // Actualizar gráfico de servicios
+                const serviciosPorDia = data.graficos.servicios_por_dia;
+                serviciosChart.data.labels = serviciosPorDia.map(s => s.fecha);
+                serviciosChart.data.datasets[0].data = serviciosPorDia.map(s => s.total);
+                serviciosChart.update();
 
-            resultadosDiv.innerHTML = '';
-            resultadosDiv.appendChild(tablaContainer);
-        }
+                // Actualizar gráfico de tipos
+                const serviciosPorTipo = data.graficos.servicios_por_tipo;
+                tiposMascotaChart.data.labels = serviciosPorTipo.map(s => s.tipo);
+                tiposMascotaChart.data.datasets[0].data = serviciosPorTipo.map(s => s.cantidad);
+                tiposMascotaChart.update();
 
-        function actualizarResumen(resumen) {
-            const resumenHtml = `
-        <div class="resumen-ventas">
-            <div class="resumen-card">
-                <span class="resumen-label">Total Ventas</span>
-                <span class="resumen-valor">${resumen.total_ventas}</span>
-            </div>
-            <div class="resumen-card">
-                <span class="resumen-label">Monto Total</span>
-                <span class="resumen-valor">$${parseFloat(resumen.monto_total).toFixed(2)}</span>
-            </div>
-            <div class="resumen-card">
-                <span class="resumen-label">Promedio</span>
-                <span class="resumen-valor">$${parseFloat(resumen.promedio_venta).toFixed(2)}</span>
-            </div>
-            <div class="resumen-card">
-                <span class="resumen-label">Mínimo</span>
-                <span class="resumen-valor">$${parseFloat(resumen.venta_minima).toFixed(2)}</span>
-            </div>
-            <div class="resumen-card">
-                <span class="resumen-label">Máximo</span>
-                <span class="resumen-valor">$${parseFloat(resumen.venta_maxima).toFixed(2)}</span>
-            </div>
-        </div>
-    `;
+                // Actualizar gráfico de mascotas
+                const serviciosPorMascota = data.graficos.servicios_por_mascota;
+                mascotasChart.data.labels = serviciosPorMascota.map(s => `${s.mascota} (${s.cliente})`);
+                mascotasChart.data.datasets[0].data = serviciosPorMascota.map(s => s.total);
+                mascotasChart.update();
+            }
 
-            const resumenContainer = document.createElement('div');
-            resumenContainer.innerHTML = resumenHtml;
-            resultadosDiv.insertBefore(resumenContainer, resultadosDiv.firstChild);
-        }
-    });
-</script>
+            function actualizarResumen(resumen) {
+                const resumenHtml = `
+            <div class="metric-card bg-blue-100">
+                <h4>Total Servicios</h4>
+                <p class="metric-value">${resumen.total_servicios}</p>
+            </div>
+            <div class="metric-card bg-green-100">
+                <h4>Monto Total</h4>
+                <p class="metric-value">Bs. ${resumen.monto_total}</p>
+            </div>
+            <div class="metric-card bg-yellow-100">
+                <h4>Promedio por Servicio</h4>
+                <p class="metric-value">Bs. ${resumen.promedio_servicio.toFixed(2)}</p>
+            </div>
+            <div class="metric-card bg-purple-100">
+                <h4>Total Mascotas</h4>
+                <p class="metric-value">${resumen.total_mascotas}</p>
+            </div>
+        `;
+                document.getElementById('metricas').innerHTML = resumenHtml;
+            }
+
+            function actualizarTabla(servicios) {
+                const tablaHtml = `
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Mascota</th>
+                        <th>Cliente</th>
+                        <th>Total</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${servicios.map(servicio => `
+                            <tr>
+                                <td>${new Date(servicio.fecha).toLocaleDateString()}</td>
+                                <td>${servicio.mascota.nombre}</td>
+                                <td>${servicio.mascota.cliente.nombre} ${servicio.mascota.cliente.apellido}</td>
+                                <td>Bs. ${servicio.total}</td>
+                                <td>
+                                    <span class="badge ${servicio.estado === '1' ? 'badge-success' : 'badge-warning'}">
+                                        ${servicio.estado === '1' ? 'Completado' : 'Pendiente'}
+                                    </span>
+                                </td>
+                            </tr>
+                        `).join('')}
+                </tbody>
+            </table>
+        `;
+                document.getElementById('tablaResultados').innerHTML = tablaHtml;
+            }
+        });
+    </script>
+
 <style>
-    /* styles.css */
-
-    /* Contenedor principal */
+    /* Estilos para el contenedor principal */
     .container {
-        max-width: 1200px;
+        max-width: 1280px;
         margin: 0 auto;
-        padding: 1.5rem 1rem;
     }
 
-    /* Card principal */
-    .bg-white {
-        background-color: white;
-        border-radius: 0.5rem;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        padding: 1.5rem;
+    /* Estilos para el título principal */
+    .text-2xl {
+        font-size: 1.75rem;
+        color: #1a365d;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #e2e8f0;
+        margin-bottom: 2rem;
     }
 
-    /* Título */
-    h1 {
-        font-size: 1.5rem;
-        font-weight: bold;
-        margin-bottom: 1.5rem;
-        color: #333;
-    }
-
-    /* Formulario */
-    .space-y-6>*+* {
-        margin-top: 1.5rem;
-    }
-
-    /* Grid para inputs */
-    .grid {
-        display: grid;
-        grid-gap: 1rem;
+    /* Estilos mejorados para los inputs y selects */
+    .form-group {
         margin-bottom: 1.5rem;
     }
 
-    @media (min-width: 768px) {
-        .grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
-    }
-
-    @media (min-width: 1024px) {
-        .grid {
-            grid-template-columns: repeat(4, 1fr);
-        }
-    }
-
-    /* Labels */
-    label {
+    .form-group label {
         display: block;
         font-size: 0.875rem;
-        font-weight: 500;
+        font-weight: 600;
         color: #4a5568;
         margin-bottom: 0.5rem;
     }
 
-    /* Inputs y Selects */
+    .form-group input[type="date"],
+    .form-group select {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+        color: #2d3748;
+        background-color: #fff;
+        transition: all 0.3s ease;
+    }
+
+    .form-group input[type="date"]:focus,
+    .form-group select:focus {
+        outline: none;
+        border-color: #4299e1;
+        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.25);
+    }
+
+    /* Estilos para los botones */
+    .bg-blue-600 {
+        background-color: #3182ce;
+        transition: all 0.3s ease;
+    }
+
+    .bg-blue-600:hover {
+        background-color: #2c5282;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Estilos para las tarjetas de resumen */
+    #resumen>div {
+        padding: 1.25rem;
+        border-radius: 0.5rem;
+        transition: all 0.3s ease;
+    }
+
+    #resumen>div:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    #resumen .text-sm {
+        font-size: 0.875rem;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+    }
+
+    #resumen .text-xl {
+        font-size: 1.5rem;
+        font-weight: 700;
+    }
+
+    /* Estilos mejorados para la tabla */
+    .min-w-full {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .min-w-full thead th {
+        background-color: #f8fafc;
+        color: #4a5568;
+        font-weight: 600;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        padding: 1rem;
+        border-bottom: 2px solid #e2e8f0;
+    }
+
+    .min-w-full tbody tr {
+        transition: all 0.2s ease;
+    }
+
+    .min-w-full tbody tr:hover {
+        background-color: #f7fafc;
+    }
+
+    .min-w-full tbody td {
+        padding: 1rem;
+        font-size: 0.875rem;
+        color: #2d3748;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    /* Estilos para los badges de estado */
+    .rounded-full {
+        padding: 0.25rem 1rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        border-radius: 9999px;
+        display: inline-block;
+    }
+
+    .bg-green-100 {
+        background-color: #c6f6d5;
+        color: #22543d;
+    }
+
+    .bg-red-100 {
+        background-color: #fed7d7;
+        color: #822727;
+    }
+
+    /* Estilos para los contenedores de gráficos */
+    .chart-container {
+        background: white;
+        border-radius: 0.5rem;
+        padding: 1.5rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+    }
+
+    .chart-container:hover {
+        box-shadow: 0 6px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .chart-container h3 {
+        color: #2d3748;
+        font-size: 1.125rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #e2e8f0;
+    }
+
+    /* Responsividad para móviles */
+    @media (max-width: 768px) {
+        .container {
+            padding: 1rem;
+        }
+
+        #resumen {
+            grid-template-columns: repeat(1, 1fr);
+        }
+
+        .min-w-full {
+            display: block;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        .chart-container {
+            margin-bottom: 1.5rem;
+        }
+    }
+
+    /* Estilos para los tooltips de los gráficos */
+    .chartjs-tooltip {
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 0.5rem;
+        border-radius: 0.25rem;
+        font-size: 0.875rem;
+    }
+
+    /* Animaciones para las cards de resumen */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    #resumen>div {
+        animation: fadeIn 0.3s ease-in-out;
+    }
+
+    /* Estilos para el loader */
+    .loader {
+        width: 100%;
+        height: 4px;
+        background-color: #f3f3f3;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .loader::after {
+        content: '';
+        position: absolute;
+        width: 40%;
+        height: 100%;
+        background-color: #3182ce;
+        animation: loading 1s infinite;
+    }
+
+    @keyframes loading {
+        0% {
+            transform: translateX(-100%);
+        }
+
+        100% {
+            transform: translateX(200%);
+        }
+    }
+
+    /* Mejoras en la accesibilidad */
+    .form-group input:focus,
+    .form-group select:focus,
+    button:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
+    }
+
+    /* Estilos para mensajes de error */
+    .error-message {
+        color: #e53e3e;
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+    }
+
+    /* Estilos para el formato de moneda */
+    .currency {
+        font-family: 'Roboto Mono', monospace;
+        font-weight: 500;
+    }
+
+    /* Estilos para los inputs de fecha y selects */
     input[type="date"],
     select {
         width: 100%;
-        padding: 0.5rem;
-        border: 1px solid #d1d5db;
-        border-radius: 0.375rem;
-        margin-top: 0.25rem;
+        padding: 0.75rem;
+        background-color: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.5rem;
         font-size: 0.875rem;
-        line-height: 1.25rem;
+        color: #1a202c;
+        transition: all 0.3s ease;
         box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    input[type="date"]:hover,
+    select:hover {
+        border-color: #cbd5e0;
     }
 
     input[type="date"]:focus,
     select:focus {
         outline: none;
-        border-color: #6366f1;
-        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        border-color: #4299e1;
+        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.25);
     }
 
-    /* Contenedor de botones */
-    .flex {
-        display: flex;
-        justify-content: flex-end;
-        gap: 1rem;
-    }
-
-    /* Estilos de botones */
-    button {
+    /* Estilos para el botón de generar */
+    .btn-generar {
+        width: 100%;
+        background-color: #4299e1;
+        color: #ffffff;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        font-size: 0.875rem;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        padding: 0.5rem 1rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-generar:hover {
+        background-color: #3182ce;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-generar:active {
+        transform: translateY(0);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-generar:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.25);
+    }
+
+    /* Estilos para las etiquetas de los inputs */
+    label {
+        display: block;
+        margin-bottom: 0.5rem;
         font-size: 0.875rem;
         font-weight: 500;
-        border-radius: 0.375rem;
-        border: none;
-        cursor: pointer;
-        transition: background-color 0.2s;
+        color: #4a5568;
     }
 
-    button[type="submit"] {
-        background-color: #4f46e5;
-        color: white;
+    /* Contenedor del formulario */
+    .form-container {
+        background-color: #ffffff;
+        padding: 1.5rem;
+        border-radius: 0.5rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
     }
 
-    button[type="submit"]:hover {
-        background-color: #4338ca;
-    }
-
-    #exportarBtn {
-        background-color: #10b981;
-        color: white;
-    }
-
-    #exportarBtn:hover {
-        background-color: #059669;
-    }
-
-    button:focus {
-        outline: none;
-        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
-    }
-
-    /* Sección de resultados */
-    #resultados {
-        margin-top: 2rem;
-    }
-
-    /* Estilos para estados disabled */
-    button:disabled {
-        opacity: 0.65;
-        cursor: not-allowed;
-    }
-
-    /* Estilos para inputs requeridos */
-    input:required:invalid {
-        border-color: #ef4444;
-    }
-
-    /* Mejoras de accesibilidad */
-    @media (prefers-reduced-motion: reduce) {
-        button {
-            transition: none;
-        }
-    }
-
-    /* Estilos de hover para dispositivos que lo soportan */
-    @media (hover: hover) {
-
-        input:hover,
-        select:hover {
-            border-color: #9ca3af;
-        }
-    }
-
-    /* Estilos para modo oscuro si el sistema lo soporta */
-    @media (prefers-color-scheme: dark) {
-        .bg-white {
-            background-color: #1f2937;
-            color: #f3f4f6;
-        }
-
-        label {
-            color: #d1d5db;
-        }
-
-        input[type="date"],
-        select {
-            background-color: #374151;
-            border-color: #4b5563;
-            color: #f3f4f6;
-        }
-
-        input[type="date"]:focus,
-        select:focus {
-            border-color: #6366f1;
-        }
-
-
-    }
-    .loader {
-            text-align: center;
-            padding: 2rem;
-            color: #666;
-        }
-    .tabla-container {
-    margin: 2rem 0;
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-}
-
-/* Estilos para la tabla de ventas */
-.tabla-ventas {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.95rem;
-    background: #fff;
-}
-
-.tabla-ventas thead {
-    background-color: #f8f9fa;
-}
-
-.tabla-ventas th {
-    padding: 1rem;
-    text-align: left;
-    color: #495057;
-    font-weight: 600;
-    border-bottom: 2px solid #dee2e6;
-}
-
-.tabla-ventas td {
-    padding: 0.875rem 1rem;
-    border-bottom: 1px solid #e9ecef;
-    color: #495057;
-}
-
-.tabla-ventas tbody tr:hover {
-    background-color: #f8f9fa;
-    transition: background-color 0.2s ease;
-}
-
-/* Estilos para los badges de estado */
-.estado-badge {
-    padding: 0.25rem 0.75rem;
-    border-radius: 50px;
-    font-size: 0.875rem;
-    font-weight: 500;
-}
-
-.estado-badge.activo {
-    background-color: #e8f5e9;
-    color: #2e7d32;
-}
-
-.estado-badge.inactivo {
-    background-color: #ffebee;
-    color: #c62828;
-}
-
-/* Estilos para el resumen de ventas */
-.resumen-ventas {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1.5rem;
-    padding: 1.5rem;
-    background: #fff;
-    margin-bottom: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.resumen-card {
-    display: flex;
-    flex-direction: column;
-    padding: 1.25rem;
-    background: #f8f9fa;
-    border-radius: 8px;
-    transition: transform 0.2s ease;
-}
-
-.resumen-card:hover {
-    transform: translateY(-2px);
-}
-
-.resumen-label {
-    font-size: 0.875rem;
-    color: #6c757d;
-    margin-bottom: 0.5rem;
-}
-
-.resumen-valor {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #212529;
-}
-
-/* Estilos para el loader */
-.loader {
-    text-align: center;
-    padding: 2rem;
-    color: #6c757d;
-}
-
-/* Estilos responsive */
-@media (max-width: 768px) {
-    .tabla-container {
-        overflow-x: auto;
-    }
-
-    .resumen-ventas {
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    /* Grid para los inputs */
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(1, 1fr);
         gap: 1rem;
-        padding: 1rem;
     }
 
-    .resumen-card {
-        padding: 1rem;
+    @media (min-width: 768px) {
+        .form-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
     }
 
-    .resumen-valor {
-        font-size: 1.25rem;
+    @media (min-width: 1024px) {
+        .form-grid {
+            grid-template-columns: repeat(4, 1fr);
+        }
     }
-}
+
+    /* Grupo de form */
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+    /* Estilos para el estado disabled */
+    input[type="date"]:disabled,
+    select:disabled,
+    .btn-generar:disabled {
+        background-color: #f7fafc;
+        cursor: not-allowed;
+        opacity: 0.7;
+    }
+
+    /* Estilos para mensajes de validación */
+    .input-error {
+        border-color: #fc8181 !important;
+    }
+
+    .error-message {
+        color: #e53e3e;
+        font-size: 0.75rem;
+        margin-top: 0.25rem;
+    }
+
+    /* Estilos para el estado de carga */
+    .loading {
+        pointer-events: none;
+        opacity: 0.7;
+    }
+
+    .loading::after {
+        content: '...';
+        animation: loading 1s infinite;
+    }
+
+    @keyframes loading {
+        0% {
+            content: '.';
+        }
+
+        33% {
+            content: '..';
+        }
+
+        66% {
+            content: '...';
+        }
+    }
 </style>
-
