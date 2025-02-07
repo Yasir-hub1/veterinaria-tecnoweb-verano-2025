@@ -161,6 +161,7 @@ Route::prefix('almacenes')->group(function () {
             Route::delete('/{servicio}', 'destroy')->name('pagos.destroy');
             Route::post('/generarCobro', 'generarCobro')->name('pagos.generarCobro');
             Route::post('/generarCobroVenta', 'generarCobroVenta')->name('pagos.generarCobro.venta');// para ventas
+            Route::post('/consultarCobroVenta', 'consultarCobroVenta')->name('pagos.consultarCobro.venta');// para ventas
         });
     });
 

@@ -354,6 +354,47 @@ generarPago() {
                 showConfirmButton: false
             });
         }
+        console.log("RESPUES TA ",data)
+        setTimeout(()=>{
+            this.consultarPago(data.nroTransaccion)
+
+        },40000)
+    })
+    .catch(error => {
+        console.error("Error al generar pago:", error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Hubo un error al generar el pago. Por favor, intente nuevamente.'
+        });
+    });
+},
+
+consultarPago(nrTransactions){
+    fetch("{{ route('pagos.consultarCobro.venta') }}", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-TOKEN": document.querySelector('input[name="_token"]').value
+        },
+        body: JSON.stringify({
+            nroTransaccion: nrTransactions,
+                  // Objeto con totales
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        this.closeModal();
+
+            console.log("RESUMEN DE data:", data);
+            Swal.fire({
+                icon: 'success',
+                title: 'Pago Generado',
+                text: data.message,
+                timer: 5000,
+                showConfirmButton: false
+            });
+
     })
     .catch(error => {
         console.error("Error al generar pago:", error);

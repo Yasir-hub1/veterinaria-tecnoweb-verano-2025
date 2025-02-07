@@ -18,6 +18,7 @@ use function Laravel\Prompts\table;
 class PagoController extends Controller
 {
 
+    const ESTADO_TRANSACCION_URL = "https://serviciostigomoney.pagofacil.com.bo/api/servicio/consultartransaccion";
 
     public function index (){
         $pagos=Pago::all();
@@ -44,8 +45,8 @@ class PagoController extends Controller
             $lcNroPago             = $nroPago; // Genera un número aleatorio entre 100,000 y 999,999   sirve para callback , pedidoID
             $lnMontoClienteEmpresa = $request->tnMonto;
             $lcCorreo              = $cliente->email;
-            $lcUrlCallBack         = route('pagos.callback');
-            $lcUrlReturn           = "http://164.92.67.126";
+            $lcUrlCallBack          = route('pagos.callback');
+            $lcUrlReturn             = route('pagos.callback');
             $laPedidoDetalle       =  $request->taPedidoDetalle;
             $lcUrl                 = "";
 
@@ -191,7 +192,7 @@ class PagoController extends Controller
             $lnMontoClienteEmpresa = $request->tnMonto;
             $lcCorreo = $cliente->email;
             $lcUrlCallBack = route('pagos.callback');
-            $lcUrlReturn = "http://164.92.67.126";
+            $lcUrlReturn = "";
             $laPedidoDetalle = $request->taPedidoDetalle;
             $lcUrl = "";
 
@@ -236,6 +237,11 @@ class PagoController extends Controller
                 'total' => $request->tnMonto,
 
             ]);
+
+        //    $this->ConsultarEstado($notaVenta->id);
+
+            // var_dump($repFacil);
+
 
             // Crear el pago
             Pago::create([
@@ -295,6 +301,32 @@ class PagoController extends Controller
                 'line' => $th->getLine()
             ], 500);
         }
+    }
+
+    public function consultarCobroVenta(Request $request)
+    {
+        $validatedData = $request->validate([
+            'nroTransaccion' => 'required'
+        ]);
+
+        try {
+            $laBody = ["TransaccionDePago" => $validatedData["nroTransaccion"]];
+            $loResponse = $this->makePostRequest(self::ESTADO_TRANSACCION_URL, $laBody);
+            $laResult = json_decode($loResponse->getBody()->getContents());
+            $texto =  $laResult->values->messageEstado;
+            return response()->json(['message' => $texto]);
+        } catch (\Throwable $th) {
+            return response()->json(['error' => $th->getMessage()], 500);
+        }
+    }
+
+    private function makePostRequest($url, $body)
+    {
+        $client = new Client();
+        return $client->post($url, [
+            'headers' => ['Accept' => 'application/json'],
+            'json' => $body
+        ]);
     }
 
 
