@@ -21,167 +21,124 @@ class ReporteController extends Controller
             ->orderBy('nombre')
             ->get();
 
-        $usuarios = User::select('id', 'name')
-            ->orderBy('name')
-            ->get();
+        $tiposPago = [
+            ['id' => '1', 'nombre' => 'QR'],
+            ['id' => '2', 'nombre' => 'Tigo Money'],
+            ['id' => '3', 'nombre' => 'Efectivo']
+        ];
 
-        return view('reportes.index', compact('clientes', 'usuarios'));
+        return view('reportes.index', compact('clientes', 'tiposPago'));
     }
 
     public function generarReporte(Request $request)
     {
-
         try {
             $request->validate([
                 'fecha_inicio' => 'required|date',
                 'fecha_fin' => 'required|date|after_or_equal:fecha_inicio',
                 'cliente_id' => 'nullable|exists:clientes,id',
-                'usuario_id' => 'nullable|exists:usuarios,id',
+                'tipo_pago' => 'nullable|in:1,2,3'
             ]);
 
-            $query = NotaVenta::with(['cliente', 'usuario'])
-            ->whereBetween(DB::raw("fecha::timestamp"), [
-                Carbon::parse($request->fecha_inicio)->startOfDay(),
-                Carbon::parse($request->fecha_fin)->endOfDay()
-            ]);
-
-
-            if ($request->cliente_id) {
-                $query->where('cliente_id', $request->cliente_id);
-            }
-
-            if ($request->usuario_id) {
-                $query->where('usuario_id', $request->usuario_id);
-            }
-
-            $ventas = $query->orderBy('fecha', 'desc')->get();
-
-            $resumen = [
-                'total_ventas' => $ventas->count(),
-                'monto_total' => $ventas->sum('total'),
-                'promedio_venta' => $ventas->avg('total'),
-                'venta_minima' => $ventas->min('total'),
-                'venta_maxima' => $ventas->max('total'),
-            ];
-
-            $pagos_por_tipo = $ventas->groupBy('tipopago')
-                ->map(function ($grupo) {
-                    return [
-                        'cantidad' => $grupo->count(),
-                        'total' => $grupo->sum('total')
-                    ];
-                });
-
-            return response()->json([
-                'ventas' => $ventas,
-                'resumen' => $resumen,
-                'pagos_por_tipo' => $pagos_por_tipo
-            ]);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    }
-
-    public function exportarExcel(Request $request)
-    {
-        try {
-            $request->validate([
-                'fecha_inicio' => 'required|date',
-                'fecha_fin' => 'required|date|after_or_equal:fecha_inicio',
-                'cliente_id' => 'nullable|exists:clientes,id',
-                'usuario_id' => 'nullable|exists:usuarios,id',
-            ]);
-
-            $query = NotaVenta::with(['cliente', 'usuario'])
-                ->whereBetween(DB::raw("fecha::timestamp"), [
-                    Carbon::parse($request->fecha_inicio)->startOfDay(),
-                    Carbon::parse($request->fecha_fin)->endOfDay()
+            $query = NotaVenta::with(['cliente', 'pago'])
+                ->whereBetween(DB::raw('DATE(fecha)'), [
+                    $request->fecha_inicio,
+                    $request->fecha_fin
                 ]);
 
             if ($request->cliente_id) {
                 $query->where('cliente_id', $request->cliente_id);
             }
 
-            if ($request->usuario_id) {
-                $query->where('usuario_id', $request->usuario_id);
+            if ($request->tipo_pago) {
+                $query->whereHas('pago', function($q) use ($request) {
+                    $q->where('tipopago', $request->tipo_pago);
+                });
             }
 
             $ventas = $query->orderBy('fecha', 'desc')->get();
 
-            // Crear un objeto Spreadsheet
-            $spreadsheet = new Spreadsheet();
-            $sheet = $spreadsheet->getActiveSheet();
+            // Preparar datos para gráficos
+            $ventasPorDia = $this->prepararVentasPorDia($ventas);
+            $ventasPorCliente = $this->prepararVentasPorCliente($ventas);
+            $ventasPorTipoPago = $this->prepararVentasPorTipoPago($ventas);
 
-            // Establecer los encabezados de columna
-            $sheet->setCellValue('A1', 'ID');
-            $sheet->setCellValue('B1', 'Fecha');
-            $sheet->setCellValue('C1', 'Cliente');
-            $sheet->setCellValue('D1', 'User');
-            $sheet->setCellValue('E1', 'Tipo de Pago');
-            $sheet->setCellValue('F1', 'Total');
-            $sheet->setCellValue('G1', 'Estado');
-
-            // Estilo de los encabezados (negrita, centrado, color de fondo)
-            $styleArray = [
-                'font' => ['bold' => true],
-                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
-                'fill' => ['fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID, 'startColor' => ['rgb' => 'CCCCCC']],
-            ];
-            $sheet->getStyle('A1:G1')->applyFromArray($styleArray);
-
-            // Iterar a través de las ventas y escribirlas en el archivo
-            $row = 2;
-            foreach ($ventas as $venta) {
-                // Tipo de pago
-                $tipoPago = $venta->tipopago == 1 ? 'QR' : ($venta->tipopago == 2 ? 'Tigo Money' : 'Otro');
-                // Estado
-                $estado = $venta->estado == 1 ? 'Activo' : 'Inactivo';
-
-                // Escribir datos en las celdas correspondientes
-                $sheet->setCellValue("A$row", $venta->id);
-                $sheet->setCellValue("B$row", Carbon::parse($venta->fecha)->format('d/m/Y H:i:s'));
-                $sheet->setCellValue("C$row", $venta->cliente->nombre . ' ' . $venta->cliente->apellido);
-                $sheet->setCellValue("D$row", $venta->usuario->name);
-                $sheet->setCellValue("E$row", $tipoPago);
-                $sheet->setCellValue("F$row", number_format($venta->total, 2));
-                $sheet->setCellValue("G$row", $estado);
-
-                $row++;
-            }
-
-            // Establecer el ancho de las columnas automáticamente
-            foreach (range('A', 'G') as $col) {
-                $sheet->getColumnDimension($col)->setAutoSize(true);
-            }
-
-            // Escribir el archivo Excel
-            $writer = new Xlsx($spreadsheet);
-
-            // Definir los encabezados para la descarga del archivo
-            $fileName = 'reporte_ventas_' . date('Y-m-d_His') . '.xlsx';
-            $headers = [
-                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
-                'Cache-Control' => 'max-age=0',
-            ];
-
-            // Retornar el archivo Excel como respuesta
-            return response()->stream(
-                function() use ($writer) {
-                    $writer->save('php://output');
-                },
-                200,
-                $headers
-            );
+            return response()->json([
+                'ventas' => $ventas,
+                'resumen' => $this->generarResumen($ventas),
+                'graficos' => [
+                    'ventas_por_dia' => $ventasPorDia,
+                    'ventas_por_cliente' => $ventasPorCliente,
+                    'ventas_por_tipo_pago' => $ventasPorTipoPago
+                ]
+            ]);
 
         } catch (\Exception $e) {
-            return back()->with('error', 'Error al exportar: ' . $e->getMessage());
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 
+    private function prepararVentasPorDia($ventas)
+    {
+        return $ventas->groupBy(function($venta) {
+            return Carbon::parse($venta->fecha)->format('Y-m-d');
+        })->map(function($grupo) {
+            return [
+                'fecha' => $grupo->first()->fecha,
+                'total' => $grupo->sum('total'),
+                'cantidad' => $grupo->count()
+            ];
+        })->values();
+    }
+
+    private function prepararVentasPorCliente($ventas)
+    {
+        return $ventas->groupBy('cliente_id')
+            ->map(function($grupo) {
+                return [
+                    'cliente' => $grupo->first()->cliente->nombre . ' ' . $grupo->first()->cliente->apellido,
+                    'total' => $grupo->sum('total'),
+                    'cantidad' => $grupo->count()
+                ];
+            })
+            ->sortByDesc('total')
+            ->take(5)
+            ->values();
+    }
+
+    private function prepararVentasPorTipoPago($ventas)
+    {
+        return $ventas->groupBy('pago.tipopago')
+            ->map(function($grupo) {
+                return [
+                    'tipo' => $this->getTipoPagoNombre($grupo->first()->pago->tipopago),
+                    'total' => $grupo->sum('total'),
+                    'cantidad' => $grupo->count()
+                ];
+            })->values();
+    }
+
+    private function getTipoPagoNombre($tipo)
+    {
+        return match($tipo) {
+            '1' => 'QR',
+            '2' => 'Tigo Money',
+            '3' => 'Efectivo',
+            default => 'Otro'
+        };
+    }
+
+    private function generarResumen($ventas)
+    {
+        return [
+            'total_ventas' => $ventas->count(),
+            'monto_total' => $ventas->sum('total'),
+            'promedio_venta' => $ventas->avg('total'),
+            'venta_minima' => $ventas->min('total'),
+            'venta_maxima' => $ventas->max('total'),
+            'total_clientes' => $ventas->unique('cliente_id')->count()
+        ];
+    }
 
 
 
