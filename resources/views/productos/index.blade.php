@@ -8,9 +8,11 @@
     <!-- Header Section -->
     <div class="producto-header">
         <h1>Gestión de Productos</h1>
+        @if(auth()->user()->hasPermission('guardar_producto'))
         <button type="button" class="btn-add" onclick="mascotaController.openModal()">
             <i class="fas fa-plus"></i> Nuevo Producto
         </button>
+        @endif
     </div>
 
     <!-- Table Section -->
@@ -25,7 +27,9 @@
                         <th>descripcion</th>
                         {{-- <th>stock</th> --}}
                         <th>precio</th>
+                        @if(auth()->user()->hasAnyPermission(['editar_producto', 'eliminar_producto']))
                         <th>Acciones</th>
+                    @endif
                     </tr>
                 </thead>
                 <tbody>
@@ -45,15 +49,21 @@
                             <td>{{ $producto->precio }}</td>
                             <td>
                                 <div class="action-buttons">
+                                    @if(auth()->user()->hasPermission('editar_producto'))
                                     <button class="btn-edit" onclick="mascotaController.openModal({{ $producto->id }})">
                                         <i class="fas fa-edit"></i>
                                     </button>
+                                    @endif
+
+                                    @if(auth()->user()->hasPermission('editar_producto'))
+
                                     <button type="button"
                                             class="btn-delete"
                                             onclick="mascotaController.delete({{ $producto->id }})"
                                             title="Eliminar producto">
                                         <i class="fas fa-trash"></i>
                                     </button>
+                                    @endif
                                 </div>
                             </td>
                         </tr>
@@ -63,11 +73,14 @@
                                 <div class="empty-state">
                                     <i class="fas fa-paw"></i>
                                     <p>No hay productos registradas</p>
+                                    @if(auth()->user()->hasPermission('guardar_producto'))
+
                                     <button type="button"
                                             class="btn-add"
                                             onclick="mascotaController.openModal()">
                                         Agregar Primera Producto
                                     </button>
+                                    @endif
                                 </div>
                             </td>
                         </tr>

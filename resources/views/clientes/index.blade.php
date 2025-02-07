@@ -79,9 +79,12 @@
                                     <div class="empty-state">
                                         <i class="fas fa-paw"></i>
                                         <p>No hay clientes registradas</p>
+                                        @if(auth()->user()->hasPermission('guardar_cliente'))
+
                                         <button type="button" class="btn-add" onclick="mascotaController.openModal()">
                                             Agregar Primera Cliente
                                         </button>
+                                        @endif
                                     </div>
                                 </td>
                             </tr>

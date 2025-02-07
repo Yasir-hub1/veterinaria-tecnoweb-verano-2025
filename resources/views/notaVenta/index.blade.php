@@ -29,9 +29,9 @@
                         <th>fecha</th>
                         <th>tipo de pago</th>
                         <th>estado</th>
-                        @if(auth()->user()->hasAnyPermission(['editar_venta', 'eliminar_venta']))
+                        {{-- @if(auth()->user()->hasAnyPermission(['editar_venta', 'eliminar_venta']))
                             <th>Acciones</th>
-                        @endif
+                        @endif --}}
                     </tr>
                 </thead>
                 <tbody>
@@ -47,7 +47,7 @@
                             </td>
                             @if(auth()->user()->hasAnyPermission(['editar_venta', 'eliminar_venta']))
 
-                            <td>
+                            {{-- <td>
                                 <div class="action-buttons">
                                     @if(auth()->user()->hasPermission('editar_venta'))
 
@@ -61,7 +61,7 @@
                                     @endif
                                     @endif
                                 </div>
-                            </td>
+                            </td> --}}
                             @endif
                         </tr>
                     @empty
@@ -70,13 +70,13 @@
                                 <div class="empty-state">
                                     <i class="fas fa-paw"></i>
                                     <p>No hay notaVentas registradas</p>
-                                    @if(auth()->user()->hasPermission('guardar_venta'))
+                                    {{-- @if(auth()->user()->hasPermission('guardar_venta'))
                                     <button type="button"
                                             class="btn-add"
                                             onclick="window.ordenServicioController.openModal()">
                                         Agregar Primera Venta de Producto
                                     </button>
-                                    @endif
+                                    @endif --}}
                                 </div>
                             </td>
                         </tr>

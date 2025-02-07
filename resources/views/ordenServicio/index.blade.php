@@ -28,9 +28,9 @@
                         <th>fecha</th>
                         <th>tipo de pago</th>
                         <th>estado</th>
-                        @if(auth()->user()->hasAnyPermission(['eliminar_orden_servicio']))
+                        {{-- @if(auth()->user()->hasAnyPermission(['eliminar_orden_servicio']))
                         <th>Acciones</th>
-                    @endif
+                    @endif --}}
                     </tr>
                 </thead>
                 <tbody>
@@ -45,12 +45,12 @@
                                 {{ $ordenServicio->estado == 1 ? 'Activo' : ($ordenServicio->estado == 2 ? 'Anulado' : 'Error') }}
                             </td>
 
-                            @if(auth()->user()->hasAnyPermission(['eliminar_orden_servicio']))
+                            {{-- @if(auth()->user()->hasAnyPermission(['eliminar_orden_servicio']))
                             <td>
                                 <div class="action-buttons">
                                     {{-- <button class="btn-edit" onclick="ordenServicioController.openModal({{ $ordenServicio->id }})">
                                         <i class="fas fa-edit"></i>
-                                    </button> --}}
+                                    </button>
                                     @if(auth()->user()->hasPermission('eliminar_orden_servicio'))
                                     @if ($ordenServicio->estado == 1)
                                     <button type="button"
@@ -63,7 +63,7 @@
                                 @endif
                                 </div>
                             </td>
-                            @endif
+                            @endif --}}
                         </tr>
                     @empty
                         <tr>

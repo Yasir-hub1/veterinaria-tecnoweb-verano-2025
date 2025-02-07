@@ -27,7 +27,7 @@ class RoleController extends Controller
             'editar_rol',
             'eliminar_rol',
 
-            "ver_rol",
+            "ver_asignacion",
             "asignar_rol"
 
         ],
@@ -140,37 +140,95 @@ class RoleController extends Controller
         return response()->json($role);
     }
 
+    // public function update(Request $request, $id)
+    // {
+    //     $request->validate([
+    //         'nombre' => 'required|string|max:255|unique:roles,nombre,'.$id,
+    //         'permisos' => 'required|array'
+    //     ]);
+
+    //     try {
+    //         DB::beginTransaction();
+
+    //         $role = Role::findOrFail($id);
+    //         $role->update([
+    //             'nombre' => $request->nombre
+    //         ]);
+
+    //         $role->permisos()->sync($request->permisos);
+
+    //         DB::commit();
+
+    //         return response()->json([
+    //             'message' => 'Rol actualizado exitosamente',
+    //             'role' => $role
+    //         ]);
+
+    //     } catch (\Exception $e) {
+    //         DB::rollBack();
+    //         return response()->json([
+    //             'message' => 'Error al actualizar el rol'
+    //         ], 500);
+    //     }
+    // }
+
     public function update(Request $request, $id)
-    {
-        $request->validate([
-            'nombre' => 'required|string|max:255|unique:roles,nombre,'.$id,
-            'permisos' => 'required|array'
+{
+    $request->validate([
+        'nombre' => 'required|string|max:255|unique:roles,nombre,'.$id,
+        'permisos' => 'required|array'
+    ]);
+
+    try {
+        DB::beginTransaction();
+
+        // 1. Actualizar el rol
+        $role = Role::findOrFail($id);
+        $role->update([
+            'nombre' => $request->nombre
         ]);
 
-        try {
-            DB::beginTransaction();
+        // 2. Sincronizar los permisos en la tabla roles_permisos
+        $role->permisos()->sync($request->permisos);
 
-            $role = Role::findOrFail($id);
-            $role->update([
-                'nombre' => $request->nombre
-            ]);
+        // 3. Actualizar la tabla usuario_rol_permiso
+        // Primero, obtener todos los usuarios que tienen este rol
+        $usuariosConRol = DB::table('usuario_rol_permiso')
+            ->where('rol_id', $id)
+            ->select('usuario_id')
+            ->distinct()
+            ->get();
 
-            $role->permisos()->sync($request->permisos);
+        // Eliminar los registros antiguos para este rol
+        DB::table('usuario_rol_permiso')
+            ->where('rol_id', $id)
+            ->delete();
 
-            DB::commit();
-
-            return response()->json([
-                'message' => 'Rol actualizado exitosamente',
-                'role' => $role
-            ]);
-
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json([
-                'message' => 'Error al actualizar el rol'
-            ], 500);
+        // Insertar los nuevos registros para cada usuario que tenía el rol
+        foreach ($usuariosConRol as $usuario) {
+            foreach ($request->permisos as $permiso_id) {
+                DB::table('usuario_rol_permiso')->insert([
+                    'usuario_id' => $usuario->usuario_id,
+                    'rol_id' => $id,
+                    'permiso_id' => $permiso_id
+                ]);
+            }
         }
+
+        DB::commit();
+
+        return response()->json([
+            'message' => 'Rol y permisos actualizados exitosamente',
+            'role' => $role
+        ]);
+
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return response()->json([
+            'message' => 'Error al actualizar el rol y permisos: ' . $e->getMessage()
+        ], 500);
     }
+}
 
     public function destroy($id)
     {

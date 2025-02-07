@@ -46,7 +46,6 @@
                                 <td>
                                     {{ $usuario->estado == '1' ? 'Activo' :'Inactivo' }}
                                 </td>
-                                @if(auth()->user()->hasAnyPermission(['editar_usuario', 'eliminar_usuario']))
                                 <td>
                                     <div class="action-buttons">
                                         @if(auth()->user()->hasPermission('editar_usuario'))
@@ -64,7 +63,7 @@
                                         @endif
                                     </div>
                                 </td>
-                                @endif
+
                             </tr>
                         @empty
                             <tr>

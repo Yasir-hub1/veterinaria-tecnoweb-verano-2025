@@ -8,9 +8,12 @@
     <!-- Header Section -->
     <div class="almacen-header">
         <h1>Gestión de Almacenes</h1>
+        @if(auth()->user()->hasPermission('guardar_almacen'))
+
         <button type="button" class="btn-add" onclick="mascotaController.openModal()">
             <i class="fas fa-plus"></i> Nuevo Almacen
         </button>
+        @endif
     </div>
 
     <!-- Table Section -->
@@ -24,7 +27,9 @@
 
                         <th>Descripcion</th>
 
-                        <th>Acciones</th>
+                        @if(auth()->user()->hasAnyPermission(['editar_usuario', 'eliminar_usuario']))
+                            <th>Acciones</th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody>
@@ -38,15 +43,22 @@
 
                             <td>
                                 <div class="action-buttons">
+                                    @if(auth()->user()->hasPermission('editar_almacen'))
+
                                     <button class="btn-edit" onclick="mascotaController.openModal({{ $almacen->id }})">
                                         <i class="fas fa-edit"></i>
                                     </button>
+                                    @endif
+
+                                    @if(auth()->user()->hasPermission('eliminar_almacen'))
+
                                     <button type="button"
                                             class="btn-delete"
                                             onclick="mascotaController.delete({{ $almacen->id }})"
                                             title="Eliminar almacen">
                                         <i class="fas fa-trash"></i>
                                     </button>
+                                    @endif
                                 </div>
                             </td>
                         </tr>
@@ -56,11 +68,14 @@
                                 <div class="empty-state">
                                     <i class="fas fa-paw"></i>
                                     <p>No hay almacenes registradas</p>
+                                    @if(auth()->user()->hasPermission('guardar_almacen'))
+
                                     <button type="button"
                                             class="btn-add"
                                             onclick="mascotaController.openModal()">
                                         Agregar Primera Almacen
                                     </button>
+                                    @endif
                                 </div>
                             </td>
                         </tr>

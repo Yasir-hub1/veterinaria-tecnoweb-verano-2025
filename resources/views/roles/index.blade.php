@@ -40,7 +40,7 @@
                                 </td>
                                 <td>
                                     <div class="action-buttons">
-                                        @if(auth()->user()->hasAnyPermission(['editar_rol', 'eliminar_rol']))
+                                        @if(auth()->user()->hasAnyPermission(['editar_rol']))
                                         <button class="btn-edit" onclick="roleController.openModal({{ $rol->id }})">
                                             <i class="fas fa-edit"></i>
                                         </button>
@@ -61,9 +61,12 @@
                                     <div class="empty-state">
                                         <i class="fas fa-user-shield"></i>
                                         <p>No hay roles registrados</p>
+            @if(auth()->user()->hasPermission('guardar_rol'))
+
                                         <button type="button" class="btn-add" onclick="roleController.openModal()">
                                             Agregar Primer Rol
                                         </button>
+                                        @endif
                                     </div>
                                 </td>
                             </tr>
@@ -132,7 +135,7 @@
     </div>
 @endsection
 {{-- {{-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> --}}
- --}}
+
 
 <script>
     const roleController = {

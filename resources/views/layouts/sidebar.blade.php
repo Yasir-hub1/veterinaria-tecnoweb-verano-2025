@@ -12,12 +12,18 @@
         <div class="nav-sections">
             <!-- Módulo 1: Gestión de Usuario -->
             @if (auth()->user()->hasAnyPermission([
+                        'ver_usuario',
                         'guardar_usuario',
                         'editar_usuario',
                         'eliminar_usuario',
+
+                        'ver_rol',
                         'guardar_rol',
                         'editar_rol',
                         'eliminar_rol',
+
+                        "ver_asignacion",
+                        "asignar_rol"
                     ]))
                 <div class="nav-module">
                     <div class="module-header">
@@ -26,18 +32,21 @@
                         <i class="fas fa-chevron-down"></i>
                     </div>
                     <nav class="nav-menu">
-                        @if (auth()->user()->hasAnyPermission(['guardar_usuario', 'editar_usuario', 'eliminar_usuario']))
+                        @if (auth()->user()->hasAnyPermission(['guardar_usuario','ver_usuario', 'editar_usuario', 'eliminar_usuario']))
                             <a href="{{ route('usuarios.index') }}" class="nav-item">
                                 <i class="fas fa-users"></i>
                                 <span>Usuarios</span>
                             </a>
                         @endif
 
-                        @if (auth()->user()->hasAnyPermission(['guardar_rol', 'editar_rol', 'eliminar_rol']))
+                        @if (auth()->user()->hasAnyPermission(["ver_rol",'guardar_rol', 'editar_rol', 'eliminar_rol']))
                             <a href="{{ route('roles.index') }}" class="nav-item">
                                 <i class="fas fa-users"></i>
                                 <span>Roles y Permisos</span>
                             </a>
+                            @endif
+                            @if (auth()->user()->hasAnyPermission(["ver_asignacion",'asignar_rol']))
+
                             <a href="{{ route('asignacion-roles.index') }}" class="nav-item">
                                 <i class="fas fa-users"></i>
                                 <span>Asignación de roles</span>
@@ -48,7 +57,20 @@
             @endif
 
             <!-- Módulo 2: Gestión de Mascotas -->
-            @if (auth()->user()->hasAnyPermission(['guardar_mascota', 'editar_mascota', 'eliminar_mascota']))
+            @if (auth()->user()->hasAnyPermission(['ver_mascota',
+            'guardar_mascota',
+            'editar_mascota',
+            'eliminar_mascota',
+
+            'ver_cliente',
+            'guardar_cliente',
+            'editar_cliente',
+            'eliminar_cliente',
+
+            'ver_servicio',
+            'guardar_servicio',
+            'editar_servicio',
+            'eliminar_servicio']))
                 <div class="nav-module">
                     <div class="module-header">
                         <i class="fas fa-paw"></i>
@@ -57,31 +79,63 @@
                     </div>
                     <nav class="nav-menu">
 
+                        @if (auth()->user()->hasAnyPermission([
+                        'ver_mascota',
+                        'guardar_mascota',
+                        'editar_mascota',
+                        'eliminar_mascota',]))
 
                         <a href="{{ route('mascotas.index') }}" class="nav-item">
                             <i class="fas fa-paw"></i>
                             <span>Mascotas</span>
                         </a>
+                        @endif
 
-
-
+                        @if (auth()->user()->hasAnyPermission([
+                           'ver_cliente',
+                            'guardar_cliente',
+                            'editar_cliente',
+                            'eliminar_cliente',]))
                         <a href="{{ route('clientes.index') }}" class="nav-item">
                             <i class="fas fa-users"></i>
                             <span>Clientes</span>
                         </a>
+                        @endif
 
-
+                        @if (auth()->user()->hasAnyPermission([
+                           'ver_servicio',
+                            'guardar_servicio',
+                            'editar_servicio',
+                            'eliminar_servicio',]))
                         <a href="{{ route('servicios.index') }}" class="nav-item">
                             <i class="fas fa-stethoscope"></i>
                             <span>Servicios</span>
                         </a>
+                        @endif
 
                     </nav>
                 </div>
             @endif
 
             <!-- Módulo 3: Gestión de Inventario -->
-            @if (auth()->user()->hasAnyPermission(['guardar_ajuste_inventario', 'editar_ajuste_inventario', 'eliminar_inventario']))
+            @if (auth()->user()->hasAnyPermission([
+            'ver_producto',
+            'guardar_producto',
+            'editar_producto',
+            'eliminar_producto',
+
+             'ver_registro_inventario',
+            'guardar_registro_inventario',
+
+
+            'ver_ajuste_inventario',
+            'guardar_ajuste_inventario',
+
+
+            'ver_almacen',
+            'guardar_almacen',
+            'editar_almacen',
+            'eliminar_almacen',]))
                 <div class="nav-module">
                     <div class="module-header">
                         <i class="fas fa-boxes"></i>
@@ -89,55 +143,100 @@
                         <i class="fas fa-chevron-down"></i>
                     </div>
                     <nav class="nav-menu">
+                        @if (auth()->user()->hasAnyPermission([
+                             'ver_producto',
+                            'guardar_producto',
+                            'editar_producto',
+                            'eliminar_producto',]))
                         <a href="{{ route('productos.index') }}" class="nav-item">
                             <i class="fas fa-box"></i>
                             <span>Productos</span>
                         </a>
+                        @endif
+
+                        @if (auth()->user()->hasAnyPermission([
+                            'ver_registro_inventario',
+                            'guardar_registro_inventario']))
                         <a href="{{ route('inventarios.index') }}" class="nav-item">
-                        <i class="fas fa-warehouse"></i>
-                        <span>Registro de Inventario</span>
-                    </a>
+                            <i class="fas fa-warehouse"></i>
+                            <span>Registro de Inventario</span>
+                        </a>
+
+                        @endif
+
+                        @if (auth()->user()->hasAnyPermission([
+                            'ver_ajuste_inventario',
+                            'guardar_ajuste_inventario']))
                         <a href="{{ route('ajusteInventarios.index') }}" class="nav-item">
                             <i class="fas fa-warehouse"></i>
                             <span>Ajuste de Inventario</span>
                         </a>
+
+                        @endif
+
+                        @if (auth()->user()->hasAnyPermission([
+                            'ver_almacen',
+                            'guardar_almacen',
+                            'editar_almacen',
+                            'eliminar_almacen',]))
                         <a href="{{ route('almacenes.index') }}" class="nav-item">
                             <i class="fas fa-store"></i>
                             <span>Almacenes</span>
                         </a>
+
+                        @endif
                     </nav>
                 </div>
             @endif
 
             <!-- Módulo 4: Gestión de Ventas -->
-            @if (auth()->user()->hasAnyPermission(['guardar_venta', 'editar_venta', 'eliminar_venta']))
+            @if (auth()->user()->hasAnyPermission([
+            'ver_venta',
+            'guardar_venta',
+            'ver_pago',
+            'ver_orden_servicio',
+            'guardar_orden_servicio'
+            ]))
                 <div class="nav-module">
                     <div class="module-header">
+
                         <i class="fas fa-shopping-cart"></i>
                         <h3>Gestión de Ventas</h3>
                         <i class="fas fa-chevron-down"></i>
                     </div>
                     <nav class="nav-menu">
+                        @if (auth()->user()->hasAnyPermission([
+                           'ver_venta',
+                            'guardar_venta',
+                           ]))
                         <a href="{{ route('notaVentas.index') }}" class="nav-item">
                             <i class="fas fa-cash-register"></i>
                             <span>Ventas</span>
                         </a>
+                        @endif
+
+
                         @if (auth()->user()->hasAnyPermission(['ver_pago']))
                             <a href="{{ route('pagos.index') }}" class="nav-item">
                                 <i class="fas fa-cash-register"></i>
                                 <span>Pagos</span>
                             </a>
                         @endif
+
+                        @if (auth()->user()->hasAnyPermission([
+                            'ver_orden_servicio',
+                            'guardar_orden_servicio']))
                         <a href="{{ route('ordenServicios.index') }}" class="nav-item">
                             <i class="fas fa-file-medical"></i>
                             <span>Ordenes de servicios</span>
                         </a>
+                        @endif
                     </nav>
                 </div>
             @endif
 
             <!-- Módulo 5: Reportes y Estadísticas -->
-            @if (auth()->user()->hasPermission('ver_reporte_venta'))
+            @if (auth()->user()->hasPermission('ver_reporte_venta',"ver_reporte_orden_servicio"))
                 <div class="nav-module">
                     <div class="module-header">
                         <i class="fas fa-chart-line"></i>
@@ -145,14 +244,23 @@
                         <i class="fas fa-chevron-down"></i>
                     </div>
                     <nav class="nav-menu">
+                        @if (auth()->user()->hasAnyPermission([
+                            'ver_reporte_venta',
+                            ]))
                         <a href="{{ route('reportes.index') }}" class="nav-item">
                             <i class="fas fa-chart-bar"></i>
                             <span>Reporte de venta</span>
                         </a>
+                        @endif
+
+                        @if (auth()->user()->hasAnyPermission([
+                            'ver_reporte_orden_servicio',
+                            ]))
                         <a href="{{ route('reportesOrdenServicio.index') }}" class="nav-item">
                             <i class="fas fa-chart-bar"></i>
                             <span>Reporte de Orden de servicio</span>
                         </a>
+                        @endif
                     </nav>
                 </div>
             @endif
@@ -183,20 +291,19 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-    const savedTheme = localStorage.getItem("theme") || "auto";
-    setTheme(savedTheme);
-});
+        const savedTheme = localStorage.getItem("theme") || "auto";
+        setTheme(savedTheme);
+    });
 
-function setTheme(theme) {
-    if (theme === "auto") {
-        const hour = new Date().getHours();
-        theme = hour >= 18 || hour < 6 ? "night" : "adults";
+    function setTheme(theme) {
+        if (theme === "auto") {
+            const hour = new Date().getHours();
+            theme = hour >= 18 || hour < 6 ? "night" : "adults";
+        }
+
+        document.body.className = theme;
+        localStorage.setItem("theme", theme);
     }
-
-    document.body.className = theme;
-    localStorage.setItem("theme", theme);
-}
-
 </script>
 <style>
     :root {
@@ -249,43 +356,50 @@ function setTheme(theme) {
         --background-color: #121212;
         --text-color: #fff;
     }
+
     .theme-selector {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            justify-content: center;
-            align-items: center;
-            max-width: 200px;
-            margin: 20px auto;
-        }
-        .theme-selector button {
-            padding: 8px 15px;
-            border: none;
-            border-radius: 5px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.2s;
-            text-align: center;
-        }
-        .theme-selector button:hover {
-            transform: scale(1.05);
-        }
-        .theme-selector button:nth-child(1) {
-            background-color: #ffcc00;
-            color: #000;
-        }
-        .theme-selector button:nth-child(2) {
-            background-color: #009688;
-            color: #fff;
-        }
-        .theme-selector button:nth-child(3) {
-            background-color: #37474f;
-            color: #fff;
-        }
-        .theme-selector button:nth-child(4) {
-            background-color: #607d8b;
-            color: #fff;
-        }
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        justify-content: center;
+        align-items: center;
+        max-width: 200px;
+        margin: 20px auto;
+    }
+
+    .theme-selector button {
+        padding: 8px 15px;
+        border: none;
+        border-radius: 5px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.2s;
+        text-align: center;
+    }
+
+    .theme-selector button:hover {
+        transform: scale(1.05);
+    }
+
+    .theme-selector button:nth-child(1) {
+        background-color: #ffcc00;
+        color: #000;
+    }
+
+    .theme-selector button:nth-child(2) {
+        background-color: #009688;
+        color: #fff;
+    }
+
+    .theme-selector button:nth-child(3) {
+        background-color: #37474f;
+        color: #fff;
+    }
+
+    .theme-selector button:nth-child(4) {
+        background-color: #607d8b;
+        color: #fff;
+    }
 </style>
 
 <style>

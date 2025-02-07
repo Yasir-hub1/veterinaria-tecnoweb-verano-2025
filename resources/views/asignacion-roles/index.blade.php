@@ -41,10 +41,14 @@
                                 </td>
                                 <td>
                                     <div class="action-buttons">
+                                        @if (auth()->user()->hasAnyPermission(['asignar_rol']))
+
+
                                         <button class="btn-edit"
                                             onclick="asignacionController.openModal({{ $usuario->id }})">
                                             <i class="fas fa-user-cog"></i>
                                         </button>
+                                        @endif
                                     </div>
                                 </td>
                             </tr>

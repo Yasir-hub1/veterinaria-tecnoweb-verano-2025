@@ -8,9 +8,12 @@
     <!-- Header Section -->
     <div class="ingreso-header">
         <h1>Registro de Inventarios</h1>
+        @if(auth()->user()->hasPermission('guardar_registro_inventario'))
+
         <button type="button" class="btn-add" onclick="mascotaController.openModal()">
             <i class="fas fa-plus"></i> Nuevo
         </button>
+        @endif
     </div>
 
     <!-- Table Section -->
@@ -60,11 +63,14 @@
                                 <div class="empty-state">
                                     <i class="fas fa-paw"></i>
                                     <p>No hay ingresos registradas</p>
+                                    @if(auth()->user()->hasPermission('guardar_registro_inventario'))
+
                                     <button type="button"
                                             class="btn-add"
                                             onclick="mascotaController.openModal()">
                                         Agregar Primera Ingreso
                                     </button>
+                                    @endif
                                 </div>
                             </td>
                         </tr>
