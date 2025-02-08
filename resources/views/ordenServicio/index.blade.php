@@ -27,7 +27,7 @@
                         <th>Mascota</th>
                         <th>fecha</th>
                         <th>tipo de pago</th>
-                        <th>estado</th>
+                        <th>Total</th>
                         {{-- @if(auth()->user()->hasAnyPermission(['eliminar_orden_servicio']))
                         <th>Acciones</th>
                     @endif --}}
@@ -41,10 +41,10 @@
 
                             <td>{{ $ordenServicio->fecha }}</td>
                             <td>{{ ($ordenServicio->pago->tipopago == 1 ? 'Pago con QR' : ($ordenServicio->pago->tipopago == 2 ? 'Pago con Tigo Money' : 'Método desconocido')) }}</td>
-                            <td style="color: {{ $ordenServicio->estado == 1 ? 'green' : ($ordenServicio->estado == 2 ? 'red' : 'black') }}">
+                            {{-- <td style="color: {{ $ordenServicio->estado == 1 ? 'green' : ($ordenServicio->estado == 2 ? 'red' : 'black') }}">
                                 {{ $ordenServicio->estado == 1 ? 'Activo' : ($ordenServicio->estado == 2 ? 'Anulado' : 'Error') }}
-                            </td>
-
+                            </td> --}}
+                            <td>{{ $ordenServicio->total }}</td>
                             {{-- @if(auth()->user()->hasAnyPermission(['eliminar_orden_servicio']))
                             <td>
                                 <div class="action-buttons">
