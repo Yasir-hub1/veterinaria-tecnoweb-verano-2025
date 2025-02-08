@@ -41,8 +41,7 @@
                                 <td>{{ $pago->fechapago }}</td>
 
                                 <td>
-                                    {{ $pago->estado == '1' ? 'Activo' :
-                                       'Anulado' }}
+                                    {{ $pago->estado  }}
                                 </td>
 
                                 <td>
@@ -51,7 +50,7 @@
                                 </td>
 
 
-
+{{--
                                 <td>
                                     <div class="action-buttons">
                                         {{-- <button class="btn-edit" onclick="egresoController.openModal({{ $pago->id }})">
@@ -62,9 +61,9 @@
                                             onclick="egresoController.delete({{ $pago->id }})"
                                             title="Eliminar pago">
                                         <i class="fas fa-trash"></i>
-                                    </button> --}}
+                                    </button>
                                     </div>
-                                </td>
+                                </td> --}}
                             </tr>
                         @empty
                             <tr>

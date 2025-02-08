@@ -24,11 +24,13 @@
             <table class="notaVenta-table">
                 <thead>
                     <tr>
+                        <th>#</th>
+
                         <th>Usuario</th>
                         <th>Cliente</th>
                         <th>fecha</th>
                         <th>tipo de pago</th>
-                        <th>estado</th>
+                        <th>Total</th>
                         {{-- @if(auth()->user()->hasAnyPermission(['editar_venta', 'eliminar_venta']))
                             <th>Acciones</th>
                         @endif --}}
@@ -37,14 +39,17 @@
                 <tbody>
                     @forelse($notaVentas as $notaVenta)
                         <tr>
+                            <td>{{ $notaVenta->id }}</td>
                             <td>{{ $notaVenta->usuario->name }}</td>
                             <td>{{ $notaVenta->cliente->nombre }}</td>
                             <td>{{ $notaVenta->fecha }}</td>
                             <td>{{ ($notaVenta->pago->tipopago == 1 ? 'Pago con QR' : ($notaVenta->pago->tipopago == 2 ? 'Pago con Tigo Money' : 'Método desconocido')) }}</td>
 
-                            <td style="color: {{ $notaVenta->estado == 1 ? 'green' : ($notaVenta->estado == 2 ? 'red' : 'black') }}">
+                            {{-- <td style="color: {{ $notaVenta->estado == 1 ? 'green' : ($notaVenta->estado == 2 ? 'red' : 'black') }}">
                                 {{ $notaVenta->estado == 1 ? 'Activo' : ($notaVenta->estado == 2 ? 'Anulado' : 'Error') }}
-                            </td>
+                            </td> --}}
+                            <td>{{ $notaVenta->total }} Bs</td>
+
                             @if(auth()->user()->hasAnyPermission(['editar_venta', 'eliminar_venta']))
 
                             {{-- <td>
@@ -379,7 +384,7 @@ consultarPago(nrTransactions){
         },
         body: JSON.stringify({
             nroTransaccion: nrTransactions,
-                  // Objeto con totales
+
         })
     })
     .then(response => response.json())
@@ -389,7 +394,7 @@ consultarPago(nrTransactions){
             console.log("RESUMEN DE data:", data);
             Swal.fire({
                 icon: 'success',
-                title: 'Pago Generado',
+                title: 'Transaccion de pago generado',
                 text: data.message,
                 timer: 5000,
                 showConfirmButton: false
@@ -675,7 +680,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     #qrImage {
-    width: 350px;  /* Ajusta el tamaño como desees */
+    width: 550px;  /* Ajusta el tamaño como desees */
     height: auto;
 }
 
@@ -818,7 +823,7 @@ document.addEventListener('DOMContentLoaded', () => {
         position: fixed;
         top: 0;
         left: 0;
-        width: 100%;
+        width: 120%;
         height: 100%;
         background-color: rgba(0, 0, 0, 0.5);
         z-index: 1001;
@@ -827,7 +832,7 @@ document.addEventListener('DOMContentLoaded', () => {
     .modal-content {
         position: relative;
         width: 100%;
-        max-width: 600px;
+        max-width: 700px;
         background-color: var(--card-background);
         border-radius: var(--radius-lg);
         box-shadow: var(--shadow-lg);

@@ -20,19 +20,20 @@ class PagoController extends Controller
 
     const ESTADO_TRANSACCION_URL = "https://serviciostigomoney.pagofacil.com.bo/api/servicio/consultartransaccion";
 
-    public function index (){
-        $pagos=Pago::all();
-        return view("pagos.index",compact("pagos"));
+    public function index()
+    {
+        $pagos = Pago::all();
+        return view("pagos.index", compact("pagos"));
     }
     public function generarCobro(Request $request)
     {
-    //    dd($request->all());
-       $nroTransaccion = 0;
-       $mascota=Mascota::find($request->mascotaId);
+        //    dd($request->all());
+        $nroTransaccion = 0;
+        $mascota = Mascota::find($request->mascotaId);
 
-       $cliente = $this->getClienteByMascota($mascota->id);
+        $cliente = $this->getClienteByMascota($mascota->id);
 
-            do {
+        do {
             $nroPago = rand(100000, 999999);
             $existe = Pago::where('id', $nroPago)->exists();
         } while ($existe);
@@ -91,10 +92,10 @@ class PagoController extends Controller
 
 
 
-               $orden= OrdenServicio::create([
+                $orden = OrdenServicio::create([
 
-                   "mascota_id"=>$request->mascotaId,
-                   "usuario_id"=>auth()->user()->id,
+                    "mascota_id" => $request->mascotaId,
+                    "usuario_id" => auth()->user()->id,
                     'fecha' => now(),
                     'estado' => 1,
                     'total' => $request->tnMonto,
@@ -103,7 +104,7 @@ class PagoController extends Controller
 
                 Pago::create([
 
-                    "orden_servicio_id"=>$orden->id,
+                    "orden_servicio_id" => $orden->id,
                     'fechapago' => now(),
                     'estado' => 1,
                     'tipopago' => $request->tnTipoServicio,
@@ -124,38 +125,33 @@ class PagoController extends Controller
                     'qrImage' => $laQrImage,
                     'nroTransaccion' =>  $nroTransaccion,
                 ]);
-
-
-
             } elseif ($request->tnTipoServicio == 2) {
-                $orden= OrdenServicio::create([
+                $orden = OrdenServicio::create([
 
-                    "mascota_id"=>$request->mascotaId,
-                    "usuario_id"=>auth()->user()->id,
-                     'fecha' => now(),
-                     'estado' => 1,
-                     'total' => $request->tnMonto,
+                    "mascota_id" => $request->mascotaId,
+                    "usuario_id" => auth()->user()->id,
+                    'fecha' => now(),
+                    'estado' => 1,
+                    'total' => $request->tnMonto,
 
-                 ]);
+                ]);
 
-                 Pago::create([
+                Pago::create([
 
-                     "orden_servicio_id"=>$orden->id,
-                     'fechapago' => now(),
-                     'estado' => 1,
-                     'tipopago' => $request->tnTipoServicio,
-                 ]);
+                    "orden_servicio_id" => $orden->id,
+                    'fechapago' => now(),
+                    'estado' => 1,
+                    'tipopago' => $request->tnTipoServicio,
+                ]);
 
 
-                 foreach ($laPedidoDetalle as $detalle) {
-                     DB::table('detalles_servicio')->insert([
-                         'orden_servicio_id' => $orden->id,
-                         'servicio_id' =>  $detalle['id'],
-                     ]);
-                 }
+                foreach ($laPedidoDetalle as $detalle) {
+                    DB::table('detalles_servicio')->insert([
+                        'orden_servicio_id' => $orden->id,
+                        'servicio_id' =>  $detalle['id'],
+                    ]);
+                }
             }
-
-
         } catch (\Throwable $th) {
 
             return $th->getMessage() . " - " . $th->getLine();
@@ -181,7 +177,7 @@ class PagoController extends Controller
         } while ($existe);
 
         try {
-            DB::beginTransaction(); // Iniciamos una transacción para asegurar la integridad de los datos
+
 
             $lcComerceID = "d029fa3a95e174a19934857f535eb9427d967218a36ea014b70ad704bc6c8d1c";
             $lnMoneda = 1;
@@ -228,8 +224,13 @@ class PagoController extends Controller
 
             $laResult = json_decode($loResponse->getBody()->getContents());
 
+            $csrfToken = csrf_token();
+            $laValues = explode(";", $laResult->values)[1];
+            $nroTransaccion = explode(";", $laResult->values)[0];
+
             // Crear la nota de venta
             $notaVenta = NotaVenta::create([
+                "id" => $nroTransaccion,
                 "cliente_id" => $request->clienteId,
                 "usuario_id" => auth()->user()->id,
                 'fecha' => now(),
@@ -237,10 +238,6 @@ class PagoController extends Controller
                 'total' => $request->tnMonto,
 
             ]);
-
-        //    $this->ConsultarEstado($notaVenta->id);
-
-            // var_dump($repFacil);
 
 
             // Crear el pago
@@ -276,12 +273,12 @@ class PagoController extends Controller
                 }
             }
 
-            DB::commit(); // Confirmar la transacción
+
 
             if ($request->tnTipoServicio == 1) {
                 $csrfToken = csrf_token();
                 $laValues = explode(";", $laResult->values)[1];
-                $nroTransaccion = explode(";", $laResult->values)[0];
+                // $nroTransaccion = explode(";", $laResult->values)[0];
                 $laQrImage = "data:image/png;base64," . json_decode($laValues)->qrImage;
 
                 return response()->json([
@@ -293,7 +290,6 @@ class PagoController extends Controller
                     'nroTransaccion' => $nroTransaccion,
                 ]);
             }
-
         } catch (\Throwable $th) {
             DB::rollBack(); // Revertir la transacción en caso de error
             return response()->json([
@@ -303,6 +299,26 @@ class PagoController extends Controller
         }
     }
 
+    // public function consultarCobroVenta(Request $request)
+    // {
+    //     $validatedData = $request->validate([
+    //         'nroTransaccion' => 'required'
+    //     ]);
+
+    //     try {
+    //         $laBody = ["TransaccionDePago" => $validatedData["nroTransaccion"]];
+    //         $loResponse = $this->makePostRequest(self::ESTADO_TRANSACCION_URL, $laBody);
+    //         $laResult = json_decode($loResponse->getBody()->getContents());
+    //         $texto =  $laResult->values->messageEstado;
+    //         $venta=NotaVenta::find($validatedData["nroTransaccion"]);
+    //         $pago=Pago::where("nota_venta_id",$venta->id)->first();
+    //         $pago->estado=$texto;
+    //         return response()->json(['message' => $texto]);
+    //     } catch (\Throwable $th) {
+    //         return response()->json(['error' => $th->getMessage()], 500);
+    //     }
+    // }
+
     public function consultarCobroVenta(Request $request)
     {
         $validatedData = $request->validate([
@@ -310,11 +326,45 @@ class PagoController extends Controller
         ]);
 
         try {
+            // Consulta el estado de la transacción
             $laBody = ["TransaccionDePago" => $validatedData["nroTransaccion"]];
             $loResponse = $this->makePostRequest(self::ESTADO_TRANSACCION_URL, $laBody);
             $laResult = json_decode($loResponse->getBody()->getContents());
-            $texto =  $laResult->values->messageEstado;
-            return response()->json(['message' => $texto]);
+
+            // Extraer solo la parte del estado sin la fecha
+            $textoCompleto = $laResult->values->messageEstado;
+            $estado = explode(' - Fecha', $textoCompleto)[0];
+
+            // Alternativamente podrías usar regex:
+            // $estado = preg_replace('/\s*-\s*Fecha.*$/', '', $textoCompleto);
+            if ($estado == "COMPLETADO - PROCESADO") {
+                // Actualiza el estado del pago
+                $pago = Pago::where('nota_venta_id', $validatedData["nroTransaccion"])
+                    ->update(['estado' => "Pagado"]);
+
+                if (!$pago) {
+                    return response()->json([
+                        'error' => 'No se encontró el pago asociado a la nota de venta'
+                    ], 404);
+                }
+
+                return response()->json(['message' => "Pago exitoso"]);
+            }else if($estado=="COMPLETADO - EN COLA"){
+
+                // Actualiza el estado del pago
+                $pago = Pago::where('nota_venta_id', $validatedData["nroTransaccion"])
+                    ->update(['estado' => "No pagado"]);
+
+                if (!$pago) {
+                    return response()->json([
+                        'error' => 'No se encontró el pago asociado a la nota de venta'
+                    ], 404);
+                }
+                return response()->json(['message' => "No pagado"]);
+            }
+
+
+
         } catch (\Throwable $th) {
             return response()->json(['error' => $th->getMessage()], 500);
         }
@@ -328,7 +378,4 @@ class PagoController extends Controller
             'json' => $body
         ]);
     }
-
-
-
 }
